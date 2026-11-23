@@ -173,12 +173,16 @@ nav button.on{border-top-color:var(--g);background:#eef6f3}
 <details>
 <summary>ข้อมูลสรุปเคส (ทีม DC กรอกภายหลังได้)</summary>
 <div class="grid">
+<div class="full" style="grid-column:1/-1"><label>สรุปเคสเดิม — เลือก Record ID ที่ยังไม่สรุป</label>
+<div class="row"><select id="d_rec" style="flex:1" onchange="pickCase()"><option value="">— เคสใหม่ (บันทึกพร้อมรายการด้านบน) —</option></select><button class="btn sec sm" type="button" onclick="loadOpen()">↻</button></div>
+<div class="hint" id="d_recinfo">เลือก Record ID เพื่อสรุปเคสที่บันทึกไว้แล้ว โดยไม่ต้องกรอกรายการใหม่</div></div>
 <div><label>RFID / กล่อง</label><input id="d_rfid" placeholder="FOAMBL-000000"></div>
 <div><label>SOLVE (ฝ่าย)</label><select id="d_solve"></select></div>
 <div><label>สาเหตุ</label><select id="d_cause"></select></div>
 <div><label>Partial/Whole box</label><select id="d_boxtype"></select></div>
 <div><label>Status</label><select id="d_status"></select></div>
 </div>
+<div class="row hide" id="d_casebar" style="margin-top:10px;justify-content:flex-end"><button class="btn sec" type="button" onclick="clearCase()">ยกเลิก</button><button class="btn" id="d_casesave" type="button" onclick="saveCase()">บันทึกสรุปเคส</button></div>
 </details>
 <div class="actbar"><span class="sp"></span><button class="btn blue" id="d_save" onclick="saveDc()">บันทึก</button></div>
 </div>
@@ -247,7 +251,7 @@ call('getInit').then(d=>{
   $('i_date').value=$('d_date').value=d.today;
   $('i_user').value=$('d_user').value=store.get('irl_user');
   const f=new Date(); f.setDate(f.getDate()-30); $('r_from').value=f.toISOString().slice(0,10); $('r_to').value=d.today;
-  addLine(); loadRecent('inv'); loadRecent('dc');
+  addLine(); loadRecent('inv'); loadRecent('dc'); loadOpen();
 }).catch(()=>{}).finally(()=>$('loading').remove());
 /* ---------- Inventory lines ---------- */
 function addLine(v){
@@ -338,9 +342,32 @@ function saveDc(){
   store.set('irl_user',d.user);
   $('d_save').disabled=true; $('d_save').textContent='กำลังบันทึก…';
   call('submitDc',d).then(r=>{ toast('บันทึกแล้ว '+r.ids[0]);
-    ['d_box','d_ord','d_sku','d_qty','d_car','d_rfid','d_photo'].forEach(i=>$(i).value=''); $('d_skuinfo').textContent=''; $('d_thumbs').innerHTML=''; PHOTOS=[]; loadRecent('dc');
+    ['d_box','d_ord','d_sku','d_qty','d_car','d_rfid','d_photo'].forEach(i=>$(i).value=''); $('d_skuinfo').textContent=''; $('d_thumbs').innerHTML=''; PHOTOS=[]; loadRecent('dc'); loadOpen();
   }).catch(()=>{}).finally(()=>{ $('d_save').disabled=false; $('d_save').textContent='บันทึก'; });
 }
+/* ---------- สรุปเคสเดิมจาก Record ID ---------- */
+let OPEN=[];
+const CASE_F={rfid:'d_rfid',solve:'d_solve',cause:'d_cause',boxType:'d_boxtype',status:'d_status'};
+function loadOpen(){ const cur=$('d_rec').value;
+  call('getOpenDc').then(list=>{ OPEN=list;
+    $('d_rec').innerHTML='<option value="">— เคสใหม่ (บันทึกพร้อมรายการด้านบน) —</option>'+list.map(x=>
+      `<option value="${esc(x.id)}">${esc(x.id)} · ${esc(x.date)} · ${esc(x.sku)} ${esc(x.item)} ×${esc(x.qty)}${x.status?' · '+esc(x.status):''}</option>`).join('');
+    $('d_rec').value=list.some(x=>x.id===cur)?cur:''; pickCase();
+    $('d_recinfo').textContent = $('d_rec').value ? $('d_recinfo').textContent : 'ยังไม่สรุป '+list.length+' เคส — เลือก Record ID เพื่อสรุปเคสที่บันทึกไว้แล้ว';
+  }).catch(()=>{}); }
+function pickCase(){ const x=OPEN.find(o=>o.id===$('d_rec').value);
+  $('d_casebar').classList.toggle('hide',!x); $('d_save').classList.toggle('hide',!!x);
+  if(!x){ Object.values(CASE_F).forEach(i=>{ const el=$(i); el.value = el.tagName==='SELECT' ? (el.options[0]||{}).value||'' : ''; }); return; }
+  Object.entries(CASE_F).forEach(([k,i])=>{ const el=$(i); const v=x[k]||'';
+    if(el.tagName==='SELECT' && v && ![...el.options].some(o=>o.value===v)) el.add(new Option(v,v));
+    el.value = v || (el.tagName==='SELECT' ? (el.options[0]||{}).value||'' : ''); });
+  $('d_recinfo').innerHTML=`<b>${esc(x.id)}</b> · พบ ${esc(x.date)} ${esc(x.time)} · ${esc(x.box)} · SKU ${esc(x.sku)} ${esc(x.item)} ×${esc(x.qty)} · ${esc(x.reason)} · ${esc(x.car)} · ผู้กรอก ${esc(x.user)}`; }
+function clearCase(){ $('d_rec').value=''; pickCase(); loadOpen(); }
+function saveCase(){ const id=$('d_rec').value; if(!id) return;
+  const d={id}; Object.entries(CASE_F).forEach(([k,i])=>d[k]=$(i).value.trim());
+  $('d_casesave').disabled=true; $('d_casesave').textContent='กำลังบันทึก…';
+  call('updateDcCase',d).then(()=>{ toast('สรุปเคส '+id+' แล้ว'); $('d_rec').value=''; loadOpen(); loadRecent('dc'); })
+  .catch(()=>{}).finally(()=>{ $('d_casesave').disabled=false; $('d_casesave').textContent='บันทึกสรุปเคส'; }); }
 function loadRecent(k){ call('getRecent',k).then(r=>{ const hide=['Email','Timestamp'];
   const idx=r.headers.map((h,i)=>hide.includes(h)?-1:i).filter(i=>i>=0);
   $(k==='dc'?'d_recent':'i_recent').innerHTML = r.rows.length ? table(idx.map(i=>r.headers[i]), r.rows.map(x=>idx.map(i=>x[i]))) : '<div class="hint" style="padding:10px">ยังไม่มีข้อมูล</div>'; }).catch(()=>{}); }
