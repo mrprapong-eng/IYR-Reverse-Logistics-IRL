@@ -66,6 +66,7 @@ th{background:#f0f3f2;position:sticky;top:0;font-weight:600;white-space:nowrap}
 .pbtn:hover,.pbtn:active{background:#eef6f3}
 details summary{cursor:pointer;color:var(--b);margin:10px 0;padding:6px 0}
 .hide{display:none}
+.oth{margin-top:6px}
 #loading{position:fixed;inset:0;background:rgba(244,246,245,.85);display:flex;align-items:center;justify-content:center;z-index:60;font-weight:600;color:var(--g)}
 @media(max-width:820px){
 body{font-size:16px;padding-bottom:calc(var(--nav) + env(safe-area-inset-bottom))}
@@ -126,7 +127,7 @@ nav button.on{border-top-color:var(--g);background:#eef6f3}
 <div><label>กะ</label><select id="i_shift"></select></div>
 <div><label>ผู้กรอก <b>*</b></label><input id="i_user" placeholder="ชื่อผู้กรอก"></div>
 <div><label>ประเภท (ค่าเริ่มต้น)</label><select id="i_type"></select></div>
-<div style="grid-column:span 2"><label>สาเหตุ (ค่าเริ่มต้น)</label><select id="i_reason"></select></div>
+<div style="grid-column:span 2"><label>สาเหตุ (ค่าเริ่มต้น)</label><select id="i_reason" onchange="togOther(this,$('i_reason_o'))"></select><input id="i_reason_o" class="oth hide" placeholder="ระบุสาเหตุ (อื่นๆ) *"></div>
 </div>
 </div>
 <div class="card">
@@ -236,6 +237,9 @@ async function call(fn, ...args){
     throw e;
   }
 }
+const isOther=v=>/อื่นๆ/.test(v||'');
+function togOther(sel,inp){ const on=isOther(sel.value); inp.classList.toggle('hide',!on); if(on) inp.focus(); else inp.value=''; }
+function reasonOf(sel,inp){ const v=sel.value, t=inp.value.trim(); return isOther(v)&&t ? v+': '+t : v; }
 function opts(sel, list, blank){ $(sel).innerHTML=(blank?'<option value="">-</option>':'')+list.map(x=>`<option>${esc(x)}</option>`).join(''); }
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));
@@ -262,12 +266,13 @@ function addLine(v){
 <div class="f fn"><span class="fl">ชื่อสินค้า / Pack</span><input class="l_name ro" readonly tabindex="-1" placeholder="ชื่อสินค้า (ดึงอัตโนมัติ)" value="${esc(v.name?(v.name+(v.pack?' · '+v.pack:'')):'')}"></div>
 <div class="f fq"><span class="fl">จำนวน *</span><input type="number" inputmode="decimal" min="0" step="any" placeholder="จำนวน" class="l_qty" value="${esc(v.qty)}"></div>
 <div class="f ft"><span class="fl">ประเภท</span><select class="l_type">${(L.invTypes||[]).map(x=>`<option ${x===$('i_type').value?'selected':''}>${esc(x)}</option>`).join('')}</select></div>
-<div class="f fr"><span class="fl">สาเหตุ</span><select class="l_reason"><option value="">(ตามค่าเริ่มต้น)</option>${(L.invReasons||[]).map(x=>`<option>${esc(x)}</option>`).join('')}</select></div>
+<div class="f fr"><span class="fl">สาเหตุ</span><select class="l_reason"><option value="">(ตามค่าเริ่มต้น)</option>${(L.invReasons||[]).map(x=>`<option>${esc(x)}</option>`).join('')}</select><input class="l_reason_o oth hide" placeholder="ระบุสาเหตุ (อื่นๆ) *"></div>
 <div class="f fm"><span class="fl">โลเคชั่น / Remark</span><input placeholder="โลเคชั่น" class="l_loc"><input placeholder="Remark" class="l_rem"></div>
 <div class="f fp"><span class="fl">รูปภาพ</span><label class="pbtn">📷 แนบรูป<input type="file" accept="image/*" multiple class="l_photo" hidden></label><div class="thumbs l_thumbs"></div></div>
 <button class="x" title="ลบ">✕</button>`;
   el.dataset.pack=v.pack||''; el.dataset.nm=v.name||'';
   el.querySelector('.x').onclick=()=>el.remove();
+  el.querySelector('.l_reason').onchange=e=>togOther(e.target,el.querySelector('.l_reason_o'));
   el._photos=[];
   el.querySelector('.l_photo').onchange=e=>{ const box=el.querySelector('.l_thumbs'), lbl=el.querySelector('.pbtn');
     const upd=()=>{ lbl.firstChild.textContent = el._photos.length ? '📷 '+el._photos.length+' รูป' : '📷 แนบรูป'; };
@@ -288,11 +293,13 @@ function saveInv(){
   const lines=[...document.querySelectorAll('#i_lines .ln:not(.hd)')].map(el=>({
     order:el.querySelector('.l_order').value, sku:el.querySelector('.l_sku').value,
     name:el.dataset.nm, pack:el.dataset.pack, qty:el.querySelector('.l_qty').value,
-    type:el.querySelector('.l_type').value, reason:el.querySelector('.l_reason').value,
+    type:el.querySelector('.l_type').value, reason:reasonOf(el.querySelector('.l_reason'),el.querySelector('.l_reason_o')), _oth:isOther(el.querySelector('.l_reason').value)&&!el.querySelector('.l_reason_o').value.trim(),
     location:el.querySelector('.l_loc').value, remark:el.querySelector('.l_rem').value, photos:el._photos||[] }));
   const d={date:$('i_date').value, shift:$('i_shift').value, user:$('i_user').value.trim(),
-    type:$('i_type').value, reason:$('i_reason').value, lines};
+    type:$('i_type').value, reason:reasonOf($('i_reason'),$('i_reason_o')), lines};
   if(!d.user) return toast('กรุณากรอกชื่อผู้กรอก',true);
+  if((isOther($('i_reason').value)&&!$('i_reason_o').value.trim()) || lines.some(l=>l._oth)) return toast('กรุณาระบุสาเหตุ (อื่นๆ)',true);
+  lines.forEach(l=>delete l._oth);
   store.set('irl_user',d.user);
   $('i_save').disabled=true; $('i_save').textContent='กำลังบันทึก…';
   call('submitInv',d).then(r=>{ toast('บันทึกแล้ว '+r.ids.length+' รายการ');
