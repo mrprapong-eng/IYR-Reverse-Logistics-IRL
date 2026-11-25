@@ -168,7 +168,7 @@ nav button.on{border-top-color:var(--g);background:#eef6f3}
 <div id="d_pick"></div>
 <div style="margin-top:12px">
 <label>รูปภาพ <b>*</b></label>
-<label class="pbtn">📷 ถ่าย / แนบรูป<input type="file" id="d_photo" accept="image/*" multiple onchange="prevPhotos()" hidden></label>
+<div class="row"><label class="pbtn" style="flex:1">📷 ถ่ายรูป<input type="file" id="d_cam" accept="image/*" capture="environment" onchange="addPhotos(this)" hidden></label><label class="pbtn" style="flex:1">🖼️ เลือกจากคลังภาพ (ได้หลายรูป)<input type="file" id="d_photo" accept="image/*" multiple onchange="addPhotos(this)" hidden></label></div><div class="hint" id="d_pcount">แนบได้สูงสุด 10 รูป · แตะที่รูปเพื่อลบ</div>
 <div class="thumbs" id="d_thumbs"></div>
 </div>
 <details>
@@ -276,7 +276,7 @@ function addLine(v){
   el._photos=[];
   el.querySelector('.l_photo').onchange=e=>{ const box=el.querySelector('.l_thumbs'), lbl=el.querySelector('.pbtn');
     const upd=()=>{ lbl.firstChild.textContent = el._photos.length ? '📷 '+el._photos.length+' รูป' : '📷 แนบรูป'; };
-    [...e.target.files].slice(0,Math.max(0,5-el._photos.length)).forEach(f=>resize(f).then(p=>{ el._photos.push(p);
+    [...e.target.files].slice(0,Math.max(0,10-el._photos.length)).forEach(f=>resize(f).then(p=>{ el._photos.push(p);
       const im=new Image(); im.src='data:image/jpeg;base64,'+p.data; im.title='คลิกเพื่อลบรูปนี้';
       im.onclick=()=>{ el._photos=el._photos.filter(x=>x!==p); im.remove(); upd(); };
       box.appendChild(im); upd(); }));
@@ -330,10 +330,15 @@ function findOrder(p){
 function dcSku(){ const s=$('d_sku').value.trim(); if(!s) return; $('d_skuinfo').textContent='กำลังค้นหา…';
   call('lookupSku',s).then(r=>{ $('d_skuinfo').textContent = r ? r.name+' · '+r.pack+(r.price?' · ฿'+r.price:'') : '❗ ไม่พบ SKU นี้'; }).catch(()=>{ $('d_skuinfo').textContent=''; }); }
 let PHOTOS=[];
-function prevPhotos(){
-  PHOTOS=[]; $('d_thumbs').innerHTML='';
-  [...$('d_photo').files].slice(0,5).forEach(f=>resize(f).then(p=>{ PHOTOS.push(p);
-    const im=new Image(); im.src='data:image/jpeg;base64,'+p.data; $('d_thumbs').appendChild(im); }));
+const MAX_PHOTOS=10;
+function photoCount(){ $('d_pcount').textContent=(PHOTOS.length?'แนบแล้ว '+PHOTOS.length+' รูป · ':'')+'แนบได้สูงสุด '+MAX_PHOTOS+' รูป · แตะที่รูปเพื่อลบ'; }
+function addPhotos(inp){
+  const files=[...inp.files], room=MAX_PHOTOS-PHOTOS.length; inp.value='';
+  if(files.length>room) toast('แนบได้สูงสุด '+MAX_PHOTOS+' รูป',true);
+  files.slice(0,Math.max(0,room)).forEach(f=>resize(f).then(p=>{ if(PHOTOS.length>=MAX_PHOTOS) return; PHOTOS.push(p);
+    const im=new Image(); im.src='data:image/jpeg;base64,'+p.data; im.title='แตะเพื่อลบรูปนี้'; im.style.cursor='pointer';
+    im.onclick=()=>{ PHOTOS=PHOTOS.filter(x=>x!==p); im.remove(); photoCount(); };
+    $('d_thumbs').appendChild(im); photoCount(); }));
 }
 function resize(file){ return new Promise(res=>{ const rd=new FileReader(); rd.onload=()=>{ const im=new Image(); im.onload=()=>{
   const k=Math.min(1,1600/Math.max(im.width,im.height)); const c=document.createElement('canvas'); c.width=im.width*k; c.height=im.height*k;
@@ -349,7 +354,7 @@ function saveDc(){
   store.set('irl_user',d.user);
   $('d_save').disabled=true; $('d_save').textContent='กำลังบันทึก…';
   call('submitDc',d).then(r=>{ toast('บันทึกแล้ว '+r.ids[0]);
-    ['d_box','d_ord','d_sku','d_qty','d_car','d_rfid','d_photo'].forEach(i=>$(i).value=''); $('d_skuinfo').textContent=''; $('d_thumbs').innerHTML=''; PHOTOS=[]; loadRecent('dc'); loadOpen();
+    ['d_box','d_ord','d_sku','d_qty','d_car','d_rfid','d_photo','d_cam'].forEach(i=>$(i).value=''); $('d_skuinfo').textContent=''; $('d_thumbs').innerHTML=''; PHOTOS=[]; photoCount(); loadRecent('dc'); loadOpen();
   }).catch(()=>{}).finally(()=>{ $('d_save').disabled=false; $('d_save').textContent='บันทึก'; });
 }
 /* ---------- สรุปเคสเดิมจาก Record ID ---------- */
