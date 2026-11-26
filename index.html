@@ -131,8 +131,8 @@ nav button.on{border-top-color:var(--g);background:#eef6f3}
 </div>
 </div>
 <div class="card">
-<h2>ค้นหาจาก Order ID ใน CS File</h2>
-<div class="row"><input id="i_ord" placeholder="Order ID" style="max-width:220px" autocomplete="off" autocapitalize="off"><button class="btn sec" onclick="findOrder('i')">ค้นหา</button></div>
+<h2>ค้นหาจาก SKU ใน CS File</h2>
+<div class="row"><input id="i_ord" placeholder="SKU" style="max-width:220px" autocomplete="off" autocapitalize="off" onkeydown="if(event.key==='Enter')findCsSku()"><button class="btn sec" onclick="findCsSku()">ค้นหา</button></div>
 <div class="hint">กดรายการที่พบเพื่อเพิ่มลงด้านล่าง (ช่วยให้จับคู่กับ CS File ได้แม่นยำ)</div>
 <div id="i_pick"></div>
 </div>
@@ -325,6 +325,22 @@ function findOrder(p){
       }
     });
   }).catch(()=>{ $(p+'_pick').innerHTML=''; });
+}
+/* ---------- SKU lookup (CS File) ---------- */
+function findCsSku(){
+  const sku=$('i_ord').value.trim(); if(!sku) return;
+  $('i_pick').innerHTML='<div class="hint">กำลังค้นหา…</div>';
+  call('lookupCsSku',sku).then(list=>{
+    if(!list.length){ $('i_pick').innerHTML='<div class="hint">ไม่พบ SKU นี้ใน CS File</div>'; return; }
+    $('i_pick').innerHTML='<div class="pick">'+list.map((x,i)=>`<div data-i="${i}"><b>${esc(x.order)}</b> · ${esc(x.sku)} ${esc(x.item)} · ${esc(x.pack)} — CS ${x.qty} ชิ้น · ${esc(x.problem)} · ${esc(x.customer)} (${esc(x.zone)}) · ลงเคส ${esc(x.caseDate)}${x.pickDate?' · นัดรับ '+esc(x.pickDate):''}</div>`).join('')+'</div>';
+    $('i_pick').querySelectorAll('[data-i]').forEach(el=>el.onclick=()=>{
+      const x=list[+el.dataset.i];
+      const first=document.querySelector('#i_lines .ln:not(.hd)');
+      if(first && !first.querySelector('.l_sku').value) first.remove();
+      addLine({order:x.order,sku:x.sku,name:x.item,pack:x.pack,qty:x.qty});
+      el.style.background='#e3f4e9';
+    });
+  }).catch(()=>{ $('i_pick').innerHTML=''; });
 }
 /* ---------- DC ---------- */
 function dcSku(){ const s=$('d_sku').value.trim(); if(!s) return; $('d_skuinfo').textContent='กำลังค้นหา…';
