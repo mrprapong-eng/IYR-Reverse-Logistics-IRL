@@ -3,227 +3,405 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1f6f5c">
+<meta name="theme-color" content="#008065">
 <title>IYR Reverse Logistics (IRL)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--g:#1f6f5c;--b:#1d4f91;--bg:#f4f6f5;--line:#dfe3e1;--txt:#1d2523;--mut:#6b7672;--red:#b42318;--amb:#b26b00;--ok:#147a3d;--nav:62px}
+/* ===== Freshket design tokens (ชุดเดียวกับ LKB Return) ===== */
+:root{
+  --n50:#F8F9FA;--n100:#E6E9EB;--n200:#C2C5C8;--n300:#A7ACAF;--n400:#8C9296;--n500:#71787D;--n600:#565E64;--n700:#464C51;--n800:#363B3F;--n900:#26292C;
+  --brand:#008065;--brand-hover:#28947E;--brand-press:#006D56;--brand-50:#F0FAF8;--brand-100:#C8E6E0;--fresh:#00CE7C;
+  --blue:#1570EF;--blue-50:#EFF8FF;
+  --red:#D92D20;--red-50:#FEF3F2;--red-deep:#912018;--amb:#B54708;--amb-50:#FFFAEB;--ok:#067647;--ok-50:#ECFDF3;
+  --bg:#F3F5F6;--line:rgba(38,41,44,.10);--txt:var(--n900);--mut:var(--n500);
+  --shadow-sm:0 1px 2px rgba(38,41,44,.04);--shadow-md:0 4px 12px rgba(38,41,44,.06);--shadow-lg:0 10px 30px rgba(0,51,40,.12),0 2px 8px rgba(0,51,40,.06);
+  --focus:rgba(0,128,101,.18);--r-panel:20px;--r-ctl:12px;--cap:999px;--ease:cubic-bezier(.2,.7,.2,1);
+  --top:56px;--tab:64px;
+}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;font-family:'Noto Sans Thai',system-ui,sans-serif;background:var(--bg);color:var(--txt);font-size:15px}
-header{background:var(--g);color:#fff;padding:12px 18px;padding-top:max(12px,env(safe-area-inset-top));display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-header h1{font-size:18px;margin:0;font-weight:700}
-header small{opacity:.8;font-size:12px}
-nav{display:flex;gap:4px;background:#fff;border-bottom:1px solid var(--line);padding:0 10px;overflow-x:auto;position:sticky;top:0;z-index:20}
-nav button{border:0;background:none;padding:12px 14px;font:inherit;color:var(--mut);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;display:flex;align-items:center;gap:6px}
-nav button i{font-style:normal}
-nav button .sm{display:none}
-nav button.on{color:var(--g);border-color:var(--g);font-weight:600}
-main{max-width:1200px;margin:0 auto;padding:16px}
-.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
-.card h2{font-size:16px;margin:0 0 12px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px 14px}
-label{display:block;font-size:13px;color:var(--mut);margin-bottom:3px}
-label b{color:var(--red)}
-input,select,textarea{width:100%;min-height:42px;padding:9px 10px;border:1px solid #c9cfcc;border-radius:8px;font:inherit;background:#fff;color:inherit}
-input:focus,select:focus{outline:2px solid #9cd3c3;border-color:var(--g)}
-.btn{border:0;border-radius:10px;padding:10px 16px;min-height:42px;font:inherit;font-weight:600;cursor:pointer;background:var(--g);color:#fff}
-.btn.sec{background:#e8eeeb;color:var(--txt)}
-.btn.blue{background:var(--b)}
-.btn.sm{padding:6px 12px;font-size:14px}
-.btn:disabled{opacity:.5;cursor:wait}
-.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-.actbar{display:flex;gap:8px;align-items:center;margin-top:12px}
-.actbar .sp{flex:1}
-.hint{font-size:12px;color:var(--mut);margin-top:3px;min-height:16px}
-.lines .ln{display:grid;grid-template-columns:1.1fr 1fr 2fr .7fr 1.2fr 1.6fr 1fr 1fr 40px;gap:6px;align-items:start;padding:8px 0;border-bottom:1px dashed var(--line);position:relative}
-.lines .hd{font-size:12px;color:var(--mut);padding-bottom:0;border:0}
-.lines .fl{display:none}
-.lines .fm input+input{margin-top:4px}
-.x{border:0;background:#fbe9e7;color:var(--red);border-radius:8px;height:42px;width:40px;cursor:pointer;font-size:16px}
-.ro{background:#f6f8f7;color:#444}
-table{border-collapse:collapse;width:100%;font-size:13px}
-th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
-th{background:#f0f3f2;position:sticky;top:0;font-weight:600;white-space:nowrap}
-.tw{overflow:auto;max-height:62vh;border:1px solid var(--line);border-radius:8px;-webkit-overflow-scrolling:touch}
-.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:12px}
-.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer}
-.kpi .n{font-size:22px;font-weight:700}
-.kpi .t{font-size:12px;color:var(--mut)}
-.kpi.on{outline:2px solid var(--g)}
-.pill{display:inline-block;padding:2px 8px;border-radius:20px;font-size:12px;white-space:nowrap}
-.s-ok{background:#e3f4e9;color:var(--ok)} .s-short{background:#fdecea;color:var(--red)} .s-over{background:#fff3dc;color:var(--amb)}
-.s-wait{background:#eef1f0;color:#555} .s-late{background:#fde2e1;color:#8a1c12;font-weight:600} .s-cancel{background:#eee;color:#888}
-.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#1d2523;color:#fff;padding:12px 18px;border-radius:10px;display:none;z-index:50;max-width:90%;box-shadow:0 6px 20px rgba(0,0,0,.2)}
-.toast.err{background:var(--red)}
-.pick{border:1px solid var(--line);border-radius:10px;margin-top:8px;max-height:300px;overflow:auto}
-.pick div{padding:10px 12px;border-bottom:1px solid var(--line);cursor:pointer;font-size:13px}
-.pick div:hover,.pick div:active{background:#eef6f3}
-.thumbs img{height:70px;border-radius:8px;margin:4px 4px 0 0;border:1px solid var(--line)}
-.lines .thumbs img{height:40px;cursor:pointer}
-.pbtn{display:flex;align-items:center;justify-content:center;gap:6px;min-height:42px;border:1px dashed #9aa5a1;border-radius:8px;font-size:13px;color:var(--g);cursor:pointer;background:#fff;margin:0;white-space:nowrap;font-weight:600}
-.pbtn:hover,.pbtn:active{background:#eef6f3}
-details summary{cursor:pointer;color:var(--b);margin:10px 0;padding:6px 0}
-.hide{display:none}
+body{margin:0;font-family:'Noto Sans Thai',system-ui,sans-serif;background:var(--bg);color:var(--txt);font-size:15px;line-height:1.5}
+button{font:inherit;color:inherit}
+svg.i{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- top bar ---------- */
+.top{position:sticky;top:0;z-index:30;height:calc(var(--top) + env(safe-area-inset-top));padding:env(safe-area-inset-top) 18px 0;display:flex;align-items:center;gap:12px;
+  background:rgba(255,255,255,.82);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)}
+.wm{font-weight:800;font-size:21px;letter-spacing:-.5px;color:var(--brand);line-height:1;white-space:nowrap}
+.wm span{color:var(--fresh)}
+.wm sup{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--fresh);vertical-align:top;margin-left:1px}
+.top .div{width:1px;height:22px;background:var(--n100)}
+.top h1{font-size:16px;margin:0;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top h1 small{font-weight:500;color:var(--mut);font-size:13px;margin-left:6px}
+.top .sp{flex:1}
+.who{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--n600);max-width:40vw}
+.who b{width:30px;height:30px;border-radius:50%;background:var(--brand-50);color:var(--brand);display:grid;place-items:center;font-size:13px;flex:none}
+.who span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ---------- tabs (segmented on desktop, floating tab bar on mobile) ---------- */
+.tabs{max-width:1200px;margin:14px auto 0;padding:0 16px}
+.seg{display:inline-flex;gap:4px;padding:4px;background:#fff;border:1px solid var(--line);border-radius:var(--cap);box-shadow:var(--shadow-sm)}
+.seg button{border:0;background:none;display:flex;align-items:center;gap:7px;padding:8px 16px;border-radius:var(--cap);cursor:pointer;color:var(--n600);font-weight:500;white-space:nowrap;transition:background .2s var(--ease),color .2s}
+.seg button:hover{background:var(--n50)}
+.seg button.on{background:var(--brand);color:#fff;font-weight:600;box-shadow:0 2px 8px rgba(0,128,101,.25)}
+.seg button .cnt{font-size:11px;font-weight:700;background:var(--red);color:#fff;border-radius:var(--cap);padding:0 6px;line-height:18px;min-width:18px;text-align:center}
+.seg button.on .cnt{background:#fff;color:var(--red)}
+.seg .sm{display:none}
+
+main{max-width:1200px;margin:0 auto;padding:14px 16px 40px}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--r-panel);padding:18px;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+.card h2{font-size:16px;margin:0 0 14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.card h2 .sub{font-size:13px;font-weight:400;color:var(--mut)}
+.card h2 .sp{flex:1}
+.step{width:24px;height:24px;border-radius:50%;background:var(--brand-50);color:var(--brand);font-size:13px;display:grid;place-items:center;flex:none}
+
+/* ---------- forms ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px 14px}
+.full{grid-column:1/-1}
+label,.lb{display:block;font-size:13px;font-weight:600;color:var(--n700);margin-bottom:5px}
+label b,.lb b{color:var(--red)}
+input,select,textarea{width:100%;min-height:44px;padding:9px 12px;border:1px solid var(--n200);border-radius:var(--r-ctl);font:inherit;background:#fff;color:inherit;transition:border-color .15s,box-shadow .15s}
+select{appearance:none;-webkit-appearance:none;padding-right:34px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' stroke='%2371787D' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 12px center}
+input:hover,select:hover{border-color:var(--n300)}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--brand);box-shadow:0 0 0 4px var(--focus)}
+input.bad{border-color:var(--red);box-shadow:0 0 0 4px rgba(217,45,32,.12)}
+input::placeholder{color:var(--n400)}
+.ro{background:var(--n50);color:var(--n700);border-style:dashed}
+.ro.miss{color:var(--red)}
+.hint{font-size:12px;color:var(--mut);margin-top:4px;min-height:16px}
+.hint.ok{color:var(--ok)} .hint.err{color:var(--red)}
 .oth{margin-top:6px}
-#loading{position:fixed;inset:0;background:rgba(244,246,245,.85);display:flex;align-items:center;justify-content:center;z-index:60;font-weight:600;color:var(--g)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:var(--r-ctl);padding:10px 18px;min-height:44px;font-weight:600;cursor:pointer;background:var(--brand);color:#fff;transition:background .15s,transform .1s;white-space:nowrap}
+.btn:hover{background:var(--brand-hover)} .btn:active{background:var(--brand-press);transform:scale(.98)}
+.btn.sec{background:var(--n50);color:var(--n800);border:1px solid var(--line)} .btn.sec:hover{background:var(--n100)}
+.btn.ghost{background:none;color:var(--brand);padding:6px 10px;min-height:36px}
+.btn.ghost:hover{background:var(--brand-50)}
+.btn.sm{padding:6px 12px;min-height:36px;font-size:14px}
+.btn:disabled{opacity:.55;cursor:wait}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.search{position:relative;flex:1;min-width:180px}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--n400)}
+.search input{padding-left:38px}
+
+/* inventory lines */
+.lines .ln{display:grid;grid-template-columns:1.1fr 1fr 2fr .7fr 1.2fr 1.6fr 1fr 1fr 40px;gap:8px;align-items:start;padding:10px 0;border-bottom:1px dashed var(--n100);position:relative}
+.lines .hd{font-size:12px;font-weight:600;color:var(--mut);padding:0 0 4px;border:0}
+.lines .fl{display:none}
+.lines .fm input+input{margin-top:6px}
+.lines .empty{padding:20px;text-align:center;color:var(--mut)}
+.x{border:0;background:var(--red-50);color:var(--red);border-radius:var(--r-ctl);height:44px;width:40px;cursor:pointer;display:grid;place-items:center}
+.x:hover{background:#FEE4E2}
+.thumbs{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.thumbs img{height:72px;width:72px;object-fit:cover;border-radius:10px;border:1px solid var(--line);cursor:pointer}
+.lines .thumbs img{height:40px;width:40px}
+.pbtn{display:flex;align-items:center;justify-content:center;gap:6px;min-height:44px;border:1.5px dashed var(--n200);border-radius:var(--r-ctl);font-size:13px;color:var(--brand);cursor:pointer;background:var(--n50);margin:0;white-space:nowrap;font-weight:600;padding:0 10px}
+.pbtn:hover{background:var(--brand-50);border-color:var(--brand-100)}
+.pbtn.has{border-style:solid;border-color:var(--brand-100);background:var(--brand-50)}
+.actbar{display:flex;gap:8px;align-items:center;margin-top:14px}
+.actbar .sp{flex:1}
+details.more{margin-top:14px;border:1px solid var(--line);border-radius:16px;padding:0 14px}
+details.more summary{cursor:pointer;color:var(--n800);font-weight:600;padding:12px 0;list-style:none;display:flex;align-items:center;gap:8px}
+details.more summary::-webkit-details-marker{display:none}
+details.more summary::after{content:'';margin-left:auto;width:8px;height:8px;border-right:2px solid var(--n400);border-bottom:2px solid var(--n400);transform:rotate(45deg);transition:transform .2s}
+details.more[open] summary::after{transform:rotate(-135deg)}
+details.more[open]{padding-bottom:14px}
+.badge-n{font-size:12px;font-weight:600;background:var(--amb-50);color:var(--amb);border-radius:var(--cap);padding:1px 8px}
+
+/* pick list */
+.pick{border:1px solid var(--line);border-radius:14px;margin-top:10px;max-height:320px;overflow:auto}
+.pick>div{padding:10px 14px;border-bottom:1px solid var(--line);cursor:pointer;font-size:13px;display:grid;grid-template-columns:1fr auto;gap:2px 12px;align-items:center}
+.pick>div:last-child{border:0}
+.pick>div:hover{background:var(--brand-50)}
+.pick>div.added{background:var(--ok-50)}
+.pick .t{font-weight:600;font-size:14px}
+.pick .m{color:var(--mut);grid-column:1}
+.pick .q{grid-row:1/span 2;grid-column:2;text-align:right;font-weight:700}
+.pick .q small{display:block;font-weight:400;color:var(--mut);font-size:11px}
+
+/* ---------- pills, records ---------- */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:var(--cap);font-size:12px;font-weight:600;white-space:nowrap;line-height:20px;background:var(--n50);color:var(--n600)}
+.pill i{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+.p-ok{background:var(--ok-50);color:var(--ok)} .p-short{background:var(--red-50);color:var(--red)} .p-over{background:var(--amb-50);color:var(--amb)}
+.p-wait{background:var(--blue-50);color:var(--blue)} .p-late{background:#FEE4E2;color:var(--red-deep)} .p-cancel{background:var(--n100);color:var(--n500)}
+.p-brand{background:var(--brand-50);color:var(--brand)}
+.recs{display:flex;flex-direction:column}
+.rec{display:grid;grid-template-columns:44px minmax(0,2.2fr) minmax(0,1.6fr) minmax(0,1fr) 190px;gap:4px 16px;padding:14px 4px;border-top:1px solid var(--line);align-items:start}
+.rec:first-child{border-top:0}
+.rec .tag{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:11px;font-weight:800;background:var(--brand-50);color:var(--brand);letter-spacing:.3px}
+.rec .tag.dc{background:var(--blue-50);color:var(--blue)}
+.rec .tag.cs{background:var(--n50);color:var(--n600)}
+.rec .ti{font-weight:600;line-height:1.35}
+.rec .ti small{font-weight:400;color:var(--mut)}
+.rec .mt{font-size:12.5px;color:var(--mut);margin-top:2px}
+.rec .mt a{color:var(--brand);font-weight:600}
+.rec .c3{font-size:13px;color:var(--n700)}
+.rec .num{text-align:right;font-weight:700;font-size:15px;white-space:nowrap}
+.rec .num small{display:block;font-weight:400;font-size:12px;color:var(--mut)}
+.rec .st{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+.d-neg{color:var(--red)} .d-pos{color:var(--amb)} .d-zero{color:var(--ok)}
+.empty{padding:28px 10px;text-align:center;color:var(--mut);font-size:14px}
+.more-btn{display:flex;justify-content:center;padding-top:12px;border-top:1px solid var(--line)}
+
+/* ---------- report (reconcile) ---------- */
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:#fff;border-radius:var(--cap);padding:6px 14px;font-size:13px;font-weight:500;cursor:pointer;color:var(--n700);display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.chip:hover{background:var(--n50)}
+.chip.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+.chip .c{font-weight:700;opacity:.75}
+.filters{display:grid;grid-template-columns:auto auto 1fr auto;gap:12px;align-items:end}
+.filters .dr{display:flex;gap:8px}
+.filters .dr>div{width:160px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 16px;box-shadow:var(--shadow-sm)}
+.stat .t{font-size:13px;color:var(--mut)}
+.stat .n{font-size:26px;font-weight:800;letter-spacing:-.5px;line-height:1.25}
+.stat .n small{font-size:14px;font-weight:500;color:var(--mut);margin-left:3px}
+.stat .s{font-size:12px;color:var(--mut)}
+.stack{display:flex;height:12px;border-radius:var(--cap);overflow:hidden;background:var(--n100);margin:2px 0 14px}
+.stack i{display:block;height:100%;transition:width .5s var(--ease)}
+.sts{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+.sbtn{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:#fff;border-radius:14px;padding:10px 12px;cursor:pointer;text-align:left}
+.sbtn:hover{background:var(--n50)}
+.sbtn.on{border-color:var(--brand);box-shadow:0 0 0 3px var(--focus)}
+.sbtn .dot{width:10px;height:10px;border-radius:3px;flex:none}
+.sbtn .l{flex:1;font-size:13px;color:var(--n700);line-height:1.3}
+.sbtn .v{font-weight:800;font-size:17px}
+.sbtn .v small{display:block;font-weight:500;font-size:11px;color:var(--mut);text-align:right}
+.bars{display:flex;flex-direction:column;gap:2px}
+.bar{display:block;width:100%;border:0;background:none;text-align:left;padding:7px 8px;border-radius:10px;cursor:pointer}
+.bar:hover{background:var(--n50)}
+.bar.on{background:var(--brand-50)}
+.bar .h{display:flex;gap:8px;font-size:14px;margin-bottom:5px}
+.bar .h span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .h b{font-weight:700} .bar .h em{font-style:normal;color:var(--mut);font-size:12px;width:36px;text-align:right}
+.bar .tr{height:8px;border-radius:var(--cap);background:var(--n100);overflow:hidden}
+.bar .tr i{display:block;height:100%;border-radius:var(--cap);background:linear-gradient(90deg,var(--fresh),var(--brand))}
+.ftag{display:inline-flex;align-items:center;gap:6px;background:var(--brand-50);color:var(--brand);border-radius:var(--cap);padding:4px 6px 4px 12px;font-size:13px;font-weight:600}
+.ftag button{border:0;background:#fff;color:var(--brand);border-radius:50%;width:22px;height:22px;cursor:pointer;display:grid;place-items:center;font-size:12px}
+.note{font-size:12px;color:var(--mut);margin-top:8px}
+
+/* ---------- misc ---------- */
+.toast{position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--n900);color:#fff;padding:12px 18px;border-radius:14px;z-index:50;max-width:90%;box-shadow:var(--shadow-lg);transition:opacity .2s,transform .25s var(--ease);font-weight:500}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.err{background:var(--red)}
+.hide{display:none!important}
+.sk{background:linear-gradient(90deg,var(--n50),var(--n100),var(--n50));background-size:200% 100%;animation:sk 1.2s infinite;border-radius:10px;height:14px;margin:10px 0}
+@keyframes sk{to{background-position:-200% 0}}
+.spin{width:16px;height:16px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:sp .7s linear infinite;display:inline-block}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ================= mobile ================= */
 @media(max-width:820px){
-body{font-size:16px;padding-bottom:calc(var(--nav) + env(safe-area-inset-bottom))}
-input,select,textarea{font-size:16px;min-height:46px}
-header{padding:10px 14px;padding-top:max(10px,env(safe-area-inset-top))}
-header h1{font-size:16px}
-main{padding:10px}
-.card{padding:14px;margin-bottom:10px}
-.grid{grid-template-columns:1fr 1fr;gap:10px}
-.grid>div[style*="span 2"],.grid>.full{grid-column:1/-1}
-nav{position:fixed;top:auto;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(4,1fr);gap:0;padding:0 0 env(safe-area-inset-bottom);border-top:1px solid var(--line);border-bottom:0;box-shadow:0 -2px 12px rgba(0,0,0,.08);overflow:visible}
-nav button{flex-direction:column;justify-content:center;gap:2px;padding:6px 2px;min-height:var(--nav);font-size:11px;line-height:1.2;white-space:normal;text-align:center;border-bottom:0;border-top:3px solid transparent}
-nav button i{font-size:20px}
-nav button .lg{display:none} nav button .sm{display:inline}
-nav button.on{border-top-color:var(--g);background:#eef6f3}
-.lines{counter-reset:ln}
-.lines .hd{display:none}
-.lines .ln{grid-template-columns:1fr 1fr;grid-template-areas:"h h" "o s" "n n" "q t" "r r" "m m" "p p";gap:10px;background:#f9fbfa;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
-.lines .ln:not(.hd){counter-increment:ln}
-.lines .ln::before{content:'รายการที่ ' counter(ln);grid-area:h;font-weight:700;color:var(--g);font-size:15px;line-height:36px}
-.lines .fl{display:block;font-size:12px;color:var(--mut);margin-bottom:3px}
-.fo{grid-area:o}.fs{grid-area:s}.fn{grid-area:n}.fq{grid-area:q}.ft{grid-area:t}.fr{grid-area:r}.fm{grid-area:m}.fp{grid-area:p}
-.lines .fm{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.lines .fm .fl{grid-column:1/-1;margin-bottom:-5px}
-.lines .fm input+input{margin-top:0}
-.lines .ln .x{position:absolute;top:12px;right:12px;width:36px;height:36px}
-.pbtn{min-height:50px;font-size:15px}
-.lines .thumbs img{height:64px}
-.actbar{position:sticky;bottom:calc(var(--nav) + env(safe-area-inset-bottom));z-index:10;background:#fff;margin:12px -14px -14px;padding:10px 14px;border-top:1px solid var(--line);border-radius:0 0 12px 12px;box-shadow:0 -6px 12px rgba(0,0,0,.05)}
-.actbar .sp{display:none}
-.actbar .btn{flex:1;min-height:50px;font-size:16px}
-.card>.row>div{flex:1 1 140px}
-.kpis{grid-template-columns:1fr 1fr;gap:8px}
-.toast{bottom:calc(var(--nav) + 16px + env(safe-area-inset-bottom))}
-.pick div{padding:12px;font-size:14px}
+  body{font-size:16px;padding-bottom:calc(var(--tab) + 24px + env(safe-area-inset-bottom))}
+  input,select,textarea{font-size:16px;min-height:48px}
+  .top{padding-left:14px;padding-right:14px;gap:10px}
+  .wm{font-size:19px}
+  .top h1 small,.who span{display:none}
+  main{padding:10px 10px 20px}
+  .card{padding:16px;margin-bottom:10px;border-radius:18px}
+  .grid{grid-template-columns:1fr 1fr;gap:12px}
+  .tabs{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));margin:0;padding:0;z-index:40}
+  .seg{display:grid;grid-template-columns:repeat(4,1fr);width:100%;border-radius:22px;padding:5px;background:rgba(255,255,255,.88);backdrop-filter:saturate(180%) blur(22px);-webkit-backdrop-filter:saturate(180%) blur(22px);box-shadow:var(--shadow-lg)}
+  .seg button{flex-direction:column;gap:2px;padding:7px 2px;min-height:54px;font-size:11px;border-radius:17px;position:relative;line-height:1.2}
+  .seg button svg.i{width:22px;height:22px}
+  .seg button.on{box-shadow:none}
+  .seg .lg{display:none} .seg .sm{display:inline}
+  .seg button .cnt{position:absolute;top:3px;right:calc(50% - 22px);font-size:10px;line-height:16px;min-width:16px;padding:0 4px}
+  .lines .hd{display:none}
+  .lines{counter-reset:ln}
+  .lines .ln{grid-template-columns:1fr 1fr;grid-template-areas:"h h" "o s" "n n" "q t" "r r" "m m" "p p";gap:10px;background:var(--n50);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
+  .lines .ln:not(.hd){counter-increment:ln}
+  .lines .ln::before{content:'รายการที่ ' counter(ln);grid-area:h;font-weight:700;color:var(--brand);font-size:15px;line-height:36px}
+  .lines .fl{display:block;font-size:12px;font-weight:600;color:var(--n600);margin-bottom:4px}
+  .fo{grid-area:o}.fs{grid-area:s}.fn{grid-area:n}.fq{grid-area:q}.ft{grid-area:t}.fr{grid-area:r}.fm{grid-area:m}.fp{grid-area:p}
+  .lines .fm{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .lines .fm .fl{grid-column:1/-1;margin-bottom:-4px}
+  .lines .fm input+input{margin-top:0}
+  .lines .ln .x{position:absolute;top:12px;right:12px;width:36px;height:36px}
+  .lines .ln input,.lines .ln select{background-color:#fff}
+  .lines .ln .ro{background:var(--n100)}
+  .pbtn{min-height:52px;font-size:15px}
+  .lines .thumbs img{height:64px;width:64px}
+  .actbar{position:sticky;bottom:calc(var(--tab) + 18px + env(safe-area-inset-bottom));z-index:10;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);margin:14px -16px -16px;padding:10px 16px;border-top:1px solid var(--line);border-radius:0 0 18px 18px}
+  .actbar .sp{display:none}
+  .actbar .btn{flex:1;min-height:52px;font-size:16px}
+  .toast{bottom:calc(var(--tab) + 28px + env(safe-area-inset-bottom))}
+  .filters{grid-template-columns:1fr}
+  .filters .dr>div{flex:1;width:auto}
+  .stats{grid-template-columns:1fr 1fr;gap:8px}
+  .stat .n{font-size:22px}
+  .sts{grid-template-columns:1fr 1fr}
+  .rec{grid-template-columns:40px minmax(0,1fr) auto;gap:2px 12px}
+  .rec .tag{width:36px;height:36px;border-radius:10px;font-size:10px}
+  .rec .c3{grid-column:2/-1}
+  .rec .c4{grid-column:2;grid-row:3}
+  .rec .st{grid-column:3;grid-row:1}
+  .rec .num{text-align:left;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap;margin-top:4px}
+  .rec .num small{display:inline}
+  details.more summary .sub{display:none}
+  .pick>div{padding:12px}
 }
+@media(max-width:380px){ .grid{grid-template-columns:1fr} .sts{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
-<div id="loading">กำลังโหลด…</div>
-<header>
-<h1>IYR Reverse Logistics : IRL</h1>
-<small id="who"></small>
+<header class="top">
+  <div class="wm" aria-label="freshket">fresh<span>ket</span><sup></sup></div>
+  <div class="div"></div>
+  <h1>Reverse Logistics<small>IYR · IRL</small></h1>
+  <div class="sp"></div>
+  <div class="who hide" id="who"><b id="who_i"></b><span id="who_n"></span></div>
 </header>
-<nav>
-<button class="on" data-t="inv"><i>📥</i><span class="lg">Inventory รับคืน</span><span class="sm">รับคืน INV</span></button>
-<button data-t="dc"><i>📦</i><span class="lg">DC พบสินค้าติดกล่อง</span><span class="sm">DC ติดกล่อง</span></button>
-<button data-t="rec"><i>📊</i><span class="lg">เทียบ CS File</span><span class="sm">เทียบ CS</span></button>
-<button data-t="unm"><i>⚠️</i><span class="lg">ไม่พบใน CS File</span><span class="sm">ไม่พบใน CS</span></button>
-</nav>
+
+<div class="tabs"><nav class="seg" role="tablist">
+  <button class="on" data-t="inv" role="tab"><svg class="i" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg><span class="lg">Inventory รับคืน</span><span class="sm">รับคืน INV</span></button>
+  <button data-t="dc" role="tab"><svg class="i" viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/></svg><span class="lg">DC พบสินค้าติดกล่อง</span><span class="sm">DC ติดกล่อง</span><span class="cnt hide" id="dc_cnt"></span></button>
+  <button data-t="rec" role="tab"><svg class="i" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15v2M11 11v6M15 7v10M19 12v5"/></svg><span class="lg">เทียบ CS File</span><span class="sm">เทียบ CS</span></button>
+  <button data-t="unm" role="tab"><svg class="i" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg><span class="lg">ไม่พบใน CS File</span><span class="sm">ไม่พบใน CS</span><span class="cnt hide" id="unm_cnt"></span></button>
+</nav></div>
+
 <main>
 <!-- ================= INVENTORY ================= -->
 <section id="t-inv">
 <div class="card">
-<h2>Inventory รับสินค้าคืน</h2>
-<div class="grid">
-<div><label>วันที่รับคืน <b>*</b></label><input type="date" id="i_date"></div>
-<div><label>กะ</label><select id="i_shift"></select></div>
-<div><label>ผู้กรอก <b>*</b></label><input id="i_user" placeholder="ชื่อผู้กรอก"></div>
-<div><label>ประเภท (ค่าเริ่มต้น)</label><select id="i_type"></select></div>
-<div style="grid-column:span 2"><label>สาเหตุ (ค่าเริ่มต้น)</label><select id="i_reason" onchange="togOther(this,$('i_reason_o'))"></select><input id="i_reason_o" class="oth hide" placeholder="ระบุสาเหตุ (อื่นๆ) *"></div>
-</div>
-</div>
-<div class="card">
-<h2>ค้นหาจาก SKU ใน CS File</h2>
-<div class="row"><input id="i_ord" placeholder="SKU" style="max-width:220px" autocomplete="off" autocapitalize="off" onkeydown="if(event.key==='Enter')findCsSku()"><button class="btn sec" onclick="findCsSku()">ค้นหา</button></div>
-<div class="hint">กดรายการที่พบเพื่อเพิ่มลงด้านล่าง (ช่วยให้จับคู่กับ CS File ได้แม่นยำ)</div>
-<div id="i_pick"></div>
+  <h2><span class="step">1</span>ข้อมูลการรับคืน</h2>
+  <div class="grid">
+    <div><label for="i_date">วันที่รับคืน <b>*</b></label><input type="date" id="i_date"></div>
+    <div><label for="i_shift">กะ</label><select id="i_shift"></select></div>
+    <div><label for="i_user">ผู้กรอก <b>*</b></label><input id="i_user" placeholder="ชื่อผู้กรอก" autocomplete="name"></div>
+    <div><label for="i_type">ประเภท (ค่าเริ่มต้น)</label><select id="i_type"></select></div>
+    <div class="full"><label for="i_reason">สาเหตุ (ค่าเริ่มต้น)</label><select id="i_reason" onchange="togOther(this,$('i_reason_o'))"></select><input id="i_reason_o" class="oth hide" placeholder="ระบุสาเหตุ (อื่นๆ) *"></div>
+  </div>
 </div>
 <div class="card">
-<h2>รายการสินค้า</h2>
-<div class="lines" id="i_lines">
-<div class="ln hd"><div>Order ID</div><div>SKU *</div><div>ชื่อสินค้า / Pack</div><div>จำนวน *</div><div>ประเภท</div><div>สาเหตุ</div><div>โลเคชั่น / Remark</div><div>รูปภาพ</div><div></div></div>
+  <h2><span class="step">2</span>ค้นหาจาก SKU ใน CS File <span class="sub">ไม่บังคับ</span></h2>
+  <div class="row">
+    <div class="search" style="max-width:340px"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="i_ord" placeholder="พิมพ์ SKU แล้วกด Enter" inputmode="numeric" autocomplete="off" autocapitalize="off" onkeydown="if(event.key==='Enter')findCsSku()"></div>
+    <button class="btn sec" id="i_find" onclick="findCsSku()">ค้นหา</button>
+  </div>
+  <div class="hint">แตะรายการที่พบเพื่อเพิ่มลงในรายการสินค้า ช่วยให้จับคู่กับ CS File ได้แม่นยำ</div>
+  <div id="i_pick"></div>
 </div>
-<div class="actbar">
-<button class="btn sec" onclick="addLine();focusLast()">+ เพิ่มรายการ</button>
-<span class="sp"></span>
-<button class="btn" id="i_save" onclick="saveInv()">บันทึก</button>
+<div class="card">
+  <h2><span class="step">3</span>รายการสินค้า <span class="sub" id="i_cnt"></span></h2>
+  <div class="lines" id="i_lines">
+    <div class="ln hd"><div>Order ID</div><div>SKU *</div><div>ชื่อสินค้า / Pack</div><div>จำนวน *</div><div>ประเภท</div><div>สาเหตุ</div><div>โลเคชั่น / Remark</div><div>รูปภาพ</div><div></div></div>
+    <div class="empty" id="i_wait"><div class="sk"></div><div class="sk" style="width:70%"></div></div>
+  </div>
+  <div class="actbar">
+    <button class="btn sec" onclick="addLine();focusLast()">+ เพิ่มรายการ</button>
+    <span class="sp"></span>
+    <button class="btn" id="i_save" onclick="saveInv()">บันทึก</button>
+  </div>
 </div>
-</div>
-<div class="card"><h2>บันทึกล่าสุด</h2><div class="tw" id="i_recent"></div></div>
+<div class="card"><h2>บันทึกล่าสุด<span class="sp"></span><button class="btn ghost sm" onclick="loadRecent('inv')">↻ รีเฟรช</button></h2><div id="i_recent"><div class="sk"></div><div class="sk"></div><div class="sk" style="width:60%"></div></div></div>
 </section>
+
 <!-- ================= DC ================= -->
 <section id="t-dc" class="hide">
 <div class="card">
-<h2>DC พบสินค้าติดกล่องกลับมา</h2>
-<div class="grid">
-<div><label>วันที่พบ <b>*</b></label><input type="date" id="d_date"></div>
-<div><label>เวลาพบสินค้า <b>*</b></label><input type="time" id="d_time"></div>
-<div><label>คลัง <b>*</b></label><select id="d_wh"></select></div>
-<div><label>BOX/ZON <b>*</b></label><input id="d_box" placeholder="เช่น DD-62"></div>
-<div class="full"><label>Order ID</label><div class="row"><input id="d_ord" style="flex:1" autocomplete="off" autocapitalize="off"><button class="btn sec sm" onclick="findOrder('d')">ค้นหา</button></div></div>
-<div class="full"><label>รหัสสินค้า (SKU) <b>*</b></label><input id="d_sku" onchange="dcSku()" autocomplete="off" autocapitalize="off"><div class="hint" id="d_skuinfo"></div></div>
-<div><label>จำนวน <b>*</b></label><input type="number" inputmode="decimal" min="0" step="any" id="d_qty"></div>
-<div><label>เหตุ <b>*</b></label><select id="d_reason"></select></div>
-<div class="full"><label>ทะเบียนรถ / ผู้นำสินค้ามาคืน <b>*</b></label><input id="d_car"></div>
-<div><label>ผู้กรอก <b>*</b></label><input id="d_user"></div>
+  <h2>DC พบสินค้าติดกล่องกลับมา</h2>
+  <div class="grid">
+    <div><label for="d_date">วันที่พบ <b>*</b></label><input type="date" id="d_date"></div>
+    <div><label for="d_time">เวลาพบสินค้า <b>*</b></label><input type="time" id="d_time"></div>
+    <div><label for="d_wh">คลัง <b>*</b></label><select id="d_wh"></select></div>
+    <div><label for="d_box">BOX/ZON <b>*</b></label><input id="d_box" placeholder="เช่น DD-62" autocapitalize="characters"></div>
+    <div class="full"><label for="d_ord">Order ID</label><div class="row"><input id="d_ord" style="flex:1" autocomplete="off" autocapitalize="off" onkeydown="if(event.key==='Enter')findOrder('d')"><button class="btn sec" onclick="findOrder('d')">ค้นหา</button></div><div id="d_pick"></div></div>
+    <div class="full"><label for="d_sku">รหัสสินค้า (SKU) <b>*</b></label><input id="d_sku" onchange="dcSku()" inputmode="numeric" autocomplete="off" autocapitalize="off"><div class="hint" id="d_skuinfo"></div></div>
+    <div><label for="d_qty">จำนวน <b>*</b></label><input type="number" inputmode="decimal" min="0" step="any" id="d_qty"></div>
+    <div><label for="d_reason">เหตุ <b>*</b></label><select id="d_reason"></select></div>
+    <div class="full"><label for="d_car">ทะเบียนรถ / ผู้นำสินค้ามาคืน <b>*</b></label><input id="d_car"></div>
+    <div><label for="d_user">ผู้กรอก <b>*</b></label><input id="d_user" autocomplete="name"></div>
+  </div>
+  <div style="margin-top:14px">
+    <span class="lb">รูปภาพ <b>*</b></span>
+    <div class="row"><label class="pbtn" style="flex:1"><svg class="i" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>ถ่ายรูป<input type="file" id="d_cam" accept="image/*" capture="environment" onchange="addPhotos(this)" hidden></label><label class="pbtn" style="flex:1"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>เลือกจากคลังภาพ<input type="file" id="d_photo" accept="image/*" multiple onchange="addPhotos(this)" hidden></label></div>
+    <div class="hint" id="d_pcount">แนบได้สูงสุด 10 รูป · แตะที่รูปเพื่อลบ</div>
+    <div class="thumbs" id="d_thumbs"></div>
+  </div>
+  <details class="more" id="d_more">
+    <summary>ข้อมูลสรุปเคส <span class="badge-n hide" id="d_opencnt"></span><span class="sub" style="font-weight:400;color:var(--mut);font-size:13px;margin-left:auto;margin-right:8px">ทีม DC กรอกภายหลังได้</span></summary>
+    <div class="grid">
+      <div class="full"><label for="d_rec">สรุปเคสเดิม: เลือก Record ID ที่ยังไม่สรุป</label>
+        <div class="row"><select id="d_rec" style="flex:1" onchange="pickCase()"><option value="">— เคสใหม่ (บันทึกพร้อมรายการด้านบน) —</option></select><button class="btn sec" type="button" title="โหลดใหม่" onclick="loadOpen()">↻</button></div>
+        <div class="hint" id="d_recinfo">เลือก Record ID เพื่อสรุปเคสที่บันทึกไว้แล้ว โดยไม่ต้องกรอกรายการใหม่</div></div>
+      <div><label for="d_rfid">RFID / กล่อง</label><input id="d_rfid" placeholder="FOAMBL-000000"></div>
+      <div><label for="d_solve">SOLVE (ฝ่าย)</label><select id="d_solve"></select></div>
+      <div><label for="d_cause">สาเหตุ</label><select id="d_cause"></select></div>
+      <div><label for="d_boxtype">Partial/Whole box</label><select id="d_boxtype"></select></div>
+      <div><label for="d_status">Status</label><select id="d_status"></select></div>
+    </div>
+    <div class="row hide" id="d_casebar" style="margin-top:12px;justify-content:flex-end"><button class="btn sec" type="button" onclick="clearCase()">ยกเลิก</button><button class="btn" id="d_casesave" type="button" onclick="saveCase()">บันทึกสรุปเคส</button></div>
+  </details>
+  <div class="actbar"><span class="sp"></span><button class="btn" id="d_save" onclick="saveDc()">บันทึก</button></div>
 </div>
-<div id="d_pick"></div>
-<div style="margin-top:12px">
-<label>รูปภาพ <b>*</b></label>
-<div class="row"><label class="pbtn" style="flex:1">📷 ถ่ายรูป<input type="file" id="d_cam" accept="image/*" capture="environment" onchange="addPhotos(this)" hidden></label><label class="pbtn" style="flex:1">🖼️ เลือกจากคลังภาพ (ได้หลายรูป)<input type="file" id="d_photo" accept="image/*" multiple onchange="addPhotos(this)" hidden></label></div><div class="hint" id="d_pcount">แนบได้สูงสุด 10 รูป · แตะที่รูปเพื่อลบ</div>
-<div class="thumbs" id="d_thumbs"></div>
-</div>
-<details>
-<summary>ข้อมูลสรุปเคส (ทีม DC กรอกภายหลังได้)</summary>
-<div class="grid">
-<div class="full" style="grid-column:1/-1"><label>สรุปเคสเดิม — เลือก Record ID ที่ยังไม่สรุป</label>
-<div class="row"><select id="d_rec" style="flex:1" onchange="pickCase()"><option value="">— เคสใหม่ (บันทึกพร้อมรายการด้านบน) —</option></select><button class="btn sec sm" type="button" onclick="loadOpen()">↻</button></div>
-<div class="hint" id="d_recinfo">เลือก Record ID เพื่อสรุปเคสที่บันทึกไว้แล้ว โดยไม่ต้องกรอกรายการใหม่</div></div>
-<div><label>RFID / กล่อง</label><input id="d_rfid" placeholder="FOAMBL-000000"></div>
-<div><label>SOLVE (ฝ่าย)</label><select id="d_solve"></select></div>
-<div><label>สาเหตุ</label><select id="d_cause"></select></div>
-<div><label>Partial/Whole box</label><select id="d_boxtype"></select></div>
-<div><label>Status</label><select id="d_status"></select></div>
-</div>
-<div class="row hide" id="d_casebar" style="margin-top:10px;justify-content:flex-end"><button class="btn sec" type="button" onclick="clearCase()">ยกเลิก</button><button class="btn" id="d_casesave" type="button" onclick="saveCase()">บันทึกสรุปเคส</button></div>
-</details>
-<div class="actbar"><span class="sp"></span><button class="btn blue" id="d_save" onclick="saveDc()">บันทึก</button></div>
-</div>
-<div class="card"><h2>บันทึกล่าสุด</h2><div class="tw" id="d_recent"></div></div>
+<div class="card"><h2>บันทึกล่าสุด<span class="sp"></span><button class="btn ghost sm" onclick="loadRecent('dc')">↻ รีเฟรช</button></h2><div id="d_recent"><div class="sk"></div><div class="sk"></div><div class="sk" style="width:60%"></div></div></div>
 </section>
+
 <!-- ================= RECONCILE ================= -->
 <section id="t-rec" class="hide">
 <div class="card">
-<div class="row">
-<div><label>วันที่ลงเคส ตั้งแต่</label><input type="date" id="r_from"></div>
-<div><label>ถึง</label><input type="date" id="r_to"></div>
-<div style="flex:1;min-width:200px"><label>ค้นหา (Order / SKU / ลูกค้า / สินค้า)</label><input id="r_q"></div>
-<div><label>&nbsp;</label><button class="btn" onclick="loadRec()">แสดง</button></div>
-<div><label>&nbsp;</label><button class="btn sec" id="r_run" onclick="runRec()">↻ เทียบข้อมูลใหม่</button></div>
+  <div class="filters">
+    <div class="dr"><div><label for="r_from">วันที่ลงเคส ตั้งแต่</label><input type="date" id="r_from" onchange="markPreset('')"></div><div><label for="r_to">ถึง</label><input type="date" id="r_to" onchange="markPreset('')"></div></div>
+    <div></div>
+    <div><label for="r_q">ค้นหา</label><div class="search"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="r_q" placeholder="Order / SKU / ลูกค้า / สินค้า" onkeydown="if(event.key==='Enter')loadRec()"></div></div>
+    <div class="row" style="flex-wrap:nowrap"><button class="btn" onclick="loadRec()">แสดง</button><button class="btn sec" id="r_run" onclick="runRec()" title="ดึง CS File มาเทียบใหม่">↻ เทียบใหม่</button></div>
+  </div>
+  <div class="row" style="margin-top:12px;justify-content:space-between">
+    <div class="chips" id="r_pre">
+      <button class="chip" data-p="today">วันนี้</button><button class="chip" data-p="7">7 วัน</button><button class="chip on" data-p="30">30 วัน</button><button class="chip" data-p="month">เดือนนี้</button>
+    </div>
+    <div class="hint" id="r_last" style="margin:0"></div>
+  </div>
 </div>
-<div class="hint" id="r_last"></div>
+<div class="stats" id="r_stats"></div>
+<div class="card">
+  <h2>สถานะการรับคืน<span class="sp"></span><span class="sub" id="r_stinfo"></span></h2>
+  <div class="stack" id="r_stack"></div>
+  <div class="sts" id="r_kpi"></div>
 </div>
-<div class="kpis" id="r_kpi"></div>
-<div class="card"><div id="r_info" class="hint"></div><div class="tw" id="r_tbl"></div></div>
+<div class="card" id="r_anc">
+  <h2>วิเคราะห์<span class="sp"></span></h2>
+  <div class="chips" id="r_dims" style="margin-bottom:10px"></div>
+  <div class="bars" id="r_bars"></div>
+  <div class="note" id="r_anote"></div>
+</div>
+<div class="card">
+  <h2>รายการ <span class="sub" id="r_info"></span><span class="sp"></span><button class="btn ghost sm" onclick="csvRec()">⤓ CSV</button></h2>
+  <div class="row" id="r_ftag" style="margin:-4px 0 8px"></div>
+  <div id="r_tbl"></div>
+</div>
 </section>
+
 <!-- ================= UNMATCHED ================= -->
 <section id="t-unm" class="hide">
 <div class="card">
-<h2>รับเข้ามาแล้ว แต่ไม่พบใน CS File</h2>
-<div class="hint">จับคู่ไม่ได้ทั้งแบบ Order ID + SKU และแบบ SKU + วันที่ (±2 วันจากวันนัดรับกลับ) — ควรให้ CS ตรวจ/เปิดเคส</div>
-<div class="tw" id="u_tbl" style="margin-top:10px"></div>
+  <h2>รับเข้ามาแล้ว แต่ไม่พบใน CS File<span class="sp"></span><button class="btn ghost sm" onclick="csvUnm()">⤓ CSV</button></h2>
+  <div class="hint" style="margin:-8px 0 8px">จับคู่ไม่ได้ทั้งแบบ Order ID + SKU และแบบ SKU + วันที่ (±2 วันจากวันนัดรับกลับ) ควรให้ CS ตรวจหรือเปิดเคส</div>
+  <div id="u_tbl"><div class="sk"></div><div class="sk"></div></div>
 </div>
 </section>
 </main>
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
 <script>
 /* ===== Apps Script API (Web App URL) ===== */
 const API = 'https://script.google.com/macros/s/AKfycbyNcsKcgsDji_c3qN-i2r_ar17PE41TMpknXIKFysb3QME7ZjAkeoMUbCNslZbF9Qce/exec';
 
 let INIT = {lists:{}};
-let REC_STATUS = '';
+let REC_STATUS = '', REC = null, REC_SHOW = 40, REC_DIM = 'ปัญหา', REC_GROUP = null;
 const $ = id => document.getElementById(id);
 const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const store = { get(k){try{return localStorage.getItem(k)||''}catch(e){return ''}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}} };
-function toast(msg, err){ const t=$('toast'); t.textContent=msg; t.className='toast'+(err?' err':''); t.style.display='block'; clearTimeout(t._h); t._h=setTimeout(()=>t.style.display='none', err?6000:3000); }
+const nf = n => (Number(n)||0).toLocaleString('th-TH');
+const TH_M = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const dayTh = s => { const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(s||'')); return m ? (+m[3])+' '+TH_M[+m[2]-1] : String(s||''); };
+const iso = d => d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const nowHM = () => { const d=new Date(); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); };
+
+function toast(msg, err){ const t=$('toast'); t.textContent=msg; t.className='toast show'+(err?' err':''); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'), err?6000:3000); }
 /* เรียกฟังก์ชันใน Apps Script ผ่าน POST — ไม่ส่ง cookie บัญชี Google จึงเปิดได้ทุกเบราว์เซอร์ */
 async function call(fn, ...args){
   try{
@@ -237,114 +415,142 @@ async function call(fn, ...args){
     throw e;
   }
 }
+function busy(btn, on, label){ if(on){ btn._t=btn.innerHTML; btn.disabled=true; btn.innerHTML='<span class="spin"></span> '+(label||'กำลังบันทึก…'); } else { btn.disabled=false; if(btn._t!=null) btn.innerHTML=btn._t; } }
 const isOther=v=>/อื่นๆ/.test(v||'');
 function togOther(sel,inp){ const on=isOther(sel.value); inp.classList.toggle('hide',!on); if(on) inp.focus(); else inp.value=''; }
 function reasonOf(sel,inp){ const v=sel.value, t=inp.value.trim(); return isOther(v)&&t ? v+': '+t : v; }
-function opts(sel, list, blank){ $(sel).innerHTML=(blank?'<option value="">-</option>':'')+list.map(x=>`<option>${esc(x)}</option>`).join(''); }
-document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
-  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));
-  ['inv','dc','rec','unm'].forEach(t=>$('t-'+t).classList.toggle('hide',t!==b.dataset.t));
+function opts(sel, list, blank){ const el=$(sel), cur=el.value;
+  el.innerHTML=(blank?'<option value="">-</option>':'')+(list||[]).map(x=>`<option>${esc(x)}</option>`).join('');
+  if(cur && [...el.options].some(o=>o.value===cur)) el.value=cur; }
+function setWho(n){ $('who').classList.toggle('hide',!n); $('who_n').textContent=n||''; $('who_i').textContent=(n||'').trim().charAt(0).toUpperCase(); }
+
+/* ---------- tabs ---------- */
+function showTab(t){
+  document.querySelectorAll('.seg button').forEach(x=>x.classList.toggle('on',x.dataset.t===t));
+  ['inv','dc','rec','unm'].forEach(k=>$('t-'+k).classList.toggle('hide',k!==t));
   window.scrollTo(0,0);
-  if(b.dataset.t==='rec'||b.dataset.t==='unm') loadRec();
-});
-call('getInit').then(d=>{
-  INIT=d; const L=d.lists;
+  if(t==='rec'||t==='unm') loadRec();
+}
+document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>showTab(b.dataset.t));
+
+/* ---------- boot: ใช้รายการตัวเลือกที่เก็บไว้ในเครื่องก่อน แล้วค่อยอัปเดตจากเซิร์ฟเวอร์ ---------- */
+function applyLists(L){
   opts('i_shift',L.shifts); opts('i_type',L.invTypes); opts('i_reason',L.invReasons,true);
   opts('d_wh',L.warehouses); opts('d_reason',L.dcReasons,true); opts('d_solve',L.solve,true);
   opts('d_cause',L.dcCauses,true); opts('d_boxtype',L.boxTypes,true); opts('d_status',L.dcStatus);
-  $('i_date').value=$('d_date').value=d.today;
-  $('i_user').value=$('d_user').value=store.get('irl_user');
-  const f=new Date(); f.setDate(f.getDate()-30); $('r_from').value=f.toISOString().slice(0,10); $('r_to').value=d.today;
-  addLine(); loadRecent('inv'); loadRecent('dc'); loadOpen();
-}).catch(()=>{}).finally(()=>$('loading').remove());
+}
+function ready(){ if($('i_wait')){ $('i_wait').remove(); addLine(); } }
+(function boot(){
+  const today=iso(new Date());
+  $('i_date').value=$('d_date').value=today; $('d_time').value=nowHM();
+  const u=store.get('irl_user'); $('i_user').value=$('d_user').value=u; setWho(u);
+  setRange('30', true);
+  let cached=null; try{ cached=JSON.parse(store.get('irl_lists')||'null'); }catch(e){}
+  if(cached){ INIT={lists:cached}; applyLists(cached); ready(); }
+})();
+call('getInit').then(d=>{
+  INIT=d; store.set('irl_lists',JSON.stringify(d.lists||{}));
+  applyLists(d.lists||{}); ready();
+  if(d.today){ ['i_date','d_date'].forEach(i=>{ if(!$(i)._touched) $(i).value=d.today; }); }
+  loadRecent('inv'); loadRecent('dc'); loadOpen(); loadCounts();
+}).catch(()=>{ if($('i_wait')) $('i_wait').innerHTML='โหลดตัวเลือกไม่สำเร็จ <button class="btn sec sm" onclick="location.reload()">ลองใหม่</button>'; });
+['i_date','d_date'].forEach(i=>$(i).addEventListener('change',()=>$(i)._touched=true));
+['i_user','d_user'].forEach(i=>$(i).addEventListener('change',e=>{ const v=e.target.value.trim(); $('i_user').value=$('d_user').value=v; if(v){ store.set('irl_user',v); setWho(v); } }));
+
 /* ---------- Inventory lines ---------- */
+const ICON_X='<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+function lineCount(){ const n=document.querySelectorAll('#i_lines .ln:not(.hd)').length; $('i_cnt').textContent=n?n+' รายการ':''; }
 function addLine(v){
-  v=v||{}; const L=INIT.lists; const el=document.createElement('div'); el.className='ln';
+  v=v||{}; const L=INIT.lists||{}; const el=document.createElement('div'); el.className='ln';
   el.innerHTML=`
 <div class="f fo"><span class="fl">Order ID</span><input placeholder="Order ID" class="l_order" autocomplete="off" autocapitalize="off" value="${esc(v.order)}"></div>
-<div class="f fs"><span class="fl">SKU *</span><input placeholder="SKU" class="l_sku" autocomplete="off" autocapitalize="off" value="${esc(v.sku)}"></div>
-<div class="f fn"><span class="fl">ชื่อสินค้า / Pack</span><input class="l_name ro" readonly tabindex="-1" placeholder="ชื่อสินค้า (ดึงอัตโนมัติ)" value="${esc(v.name?(v.name+(v.pack?' · '+v.pack:'')):'')}"></div>
+<div class="f fs"><span class="fl">SKU *</span><input placeholder="SKU" class="l_sku" inputmode="numeric" autocomplete="off" autocapitalize="off" value="${esc(v.sku)}"></div>
+<div class="f fn"><span class="fl">ชื่อสินค้า / Pack</span><input class="l_name ro" readonly tabindex="-1" placeholder="ดึงอัตโนมัติจาก SKU" value="${esc(v.name?(v.name+(v.pack?' · '+v.pack:'')):'')}"></div>
 <div class="f fq"><span class="fl">จำนวน *</span><input type="number" inputmode="decimal" min="0" step="any" placeholder="จำนวน" class="l_qty" value="${esc(v.qty)}"></div>
 <div class="f ft"><span class="fl">ประเภท</span><select class="l_type">${(L.invTypes||[]).map(x=>`<option ${x===$('i_type').value?'selected':''}>${esc(x)}</option>`).join('')}</select></div>
 <div class="f fr"><span class="fl">สาเหตุ</span><select class="l_reason"><option value="">(ตามค่าเริ่มต้น)</option>${(L.invReasons||[]).map(x=>`<option>${esc(x)}</option>`).join('')}</select><input class="l_reason_o oth hide" placeholder="ระบุสาเหตุ (อื่นๆ) *"></div>
 <div class="f fm"><span class="fl">โลเคชั่น / Remark</span><input placeholder="โลเคชั่น" class="l_loc"><input placeholder="Remark" class="l_rem"></div>
-<div class="f fp"><span class="fl">รูปภาพ</span><label class="pbtn">📷 แนบรูป<input type="file" accept="image/*" multiple class="l_photo" hidden></label><div class="thumbs l_thumbs"></div></div>
-<button class="x" title="ลบ">✕</button>`;
+<div class="f fp"><span class="fl">รูปภาพ</span><label class="pbtn"><span class="pl">📷 แนบรูป</span><input type="file" accept="image/*" multiple class="l_photo" hidden></label><div class="thumbs l_thumbs"></div></div>
+<button class="x" title="ลบรายการนี้" aria-label="ลบรายการนี้">${ICON_X}</button>`;
   el.dataset.pack=v.pack||''; el.dataset.nm=v.name||'';
-  el.querySelector('.x').onclick=()=>el.remove();
+  el.querySelector('.x').onclick=()=>{ el.remove(); lineCount(); };
   el.querySelector('.l_reason').onchange=e=>togOther(e.target,el.querySelector('.l_reason_o'));
+  el.querySelectorAll('.l_sku,.l_qty').forEach(i=>i.addEventListener('input',()=>i.classList.remove('bad')));
   el._photos=[];
   el.querySelector('.l_photo').onchange=e=>{ const box=el.querySelector('.l_thumbs'), lbl=el.querySelector('.pbtn');
-    const upd=()=>{ lbl.firstChild.textContent = el._photos.length ? '📷 '+el._photos.length+' รูป' : '📷 แนบรูป'; };
+    const upd=()=>{ lbl.querySelector('.pl').textContent = el._photos.length ? '📷 '+el._photos.length+' รูป' : '📷 แนบรูป'; lbl.classList.toggle('has',!!el._photos.length); };
     [...e.target.files].slice(0,Math.max(0,10-el._photos.length)).forEach(f=>resize(f).then(p=>{ el._photos.push(p);
-      const im=new Image(); im.src='data:image/jpeg;base64,'+p.data; im.title='คลิกเพื่อลบรูปนี้';
+      const im=new Image(); im.src='data:image/jpeg;base64,'+p.data; im.title='แตะเพื่อลบรูปนี้';
       im.onclick=()=>{ el._photos=el._photos.filter(x=>x!==p); im.remove(); upd(); };
       box.appendChild(im); upd(); }));
     e.target.value=''; };
-  el.querySelector('.l_sku').onchange=e=>{ const sku=e.target.value.trim(); if(!sku) return;
-    el.querySelector('.l_name').value='กำลังค้นหา…';
+  el.querySelector('.l_sku').onchange=e=>{ const sku=e.target.value.trim(), nm=el.querySelector('.l_name'); if(!sku) return;
+    nm.classList.remove('miss'); nm.value='กำลังค้นหา…';
     call('lookupSku',sku).then(r=>{ el.dataset.nm=r?r.name:''; el.dataset.pack=r?r.pack:'';
-      el.querySelector('.l_name').value = r ? r.name+(r.pack?' · '+r.pack:'') : '❗ ไม่พบ SKU นี้'; }).catch(()=>{ el.querySelector('.l_name').value=''; }); };
-  $('i_lines').appendChild(el);
+      nm.value = r ? r.name+(r.pack?' · '+r.pack:'') : 'ไม่พบ SKU นี้'; nm.classList.toggle('miss',!r); }).catch(()=>{ nm.value=''; }); };
+  $('i_lines').appendChild(el); lineCount();
 }
 function focusLast(){ const l=[...document.querySelectorAll('#i_lines .ln:not(.hd)')].pop(); if(!l) return;
   l.scrollIntoView({behavior:'smooth',block:'center'}); setTimeout(()=>l.querySelector('.l_order').focus({preventScroll:true}),350); }
 function saveInv(){
-  const lines=[...document.querySelectorAll('#i_lines .ln:not(.hd)')].map(el=>({
+  const els=[...document.querySelectorAll('#i_lines .ln:not(.hd)')];
+  // ข้ามบรรทัดที่ว่างทั้งหมด
+  const used=els.filter(el=>el.querySelector('.l_order').value.trim()||el.querySelector('.l_sku').value.trim()||el.querySelector('.l_qty').value.trim()||(el._photos||[]).length);
+  const d={date:$('i_date').value, shift:$('i_shift').value, user:$('i_user').value.trim(), type:$('i_type').value, reason:reasonOf($('i_reason'),$('i_reason_o'))};
+  if(!d.user){ $('i_user').classList.add('bad'); $('i_user').focus(); return toast('กรุณากรอกชื่อผู้กรอก',true); }
+  if(!used.length) return toast('กรุณาเพิ่มรายการสินค้าอย่างน้อย 1 รายการ',true);
+  for(const el of used){ const s=el.querySelector('.l_sku'), q=el.querySelector('.l_qty');
+    if(!s.value.trim()||!q.value.trim()){ [s,q].forEach(i=>i.classList.toggle('bad',!i.value.trim())); el.scrollIntoView({behavior:'smooth',block:'center'});
+      return toast('รายการที่ '+(els.indexOf(el)+1)+': กรุณากรอก SKU และจำนวน',true); } }
+  if((isOther($('i_reason').value)&&!$('i_reason_o').value.trim()) || used.some(el=>isOther(el.querySelector('.l_reason').value)&&!el.querySelector('.l_reason_o').value.trim())) return toast('กรุณาระบุสาเหตุ (อื่นๆ)',true);
+  d.lines=used.map(el=>({
     order:el.querySelector('.l_order').value, sku:el.querySelector('.l_sku').value,
     name:el.dataset.nm, pack:el.dataset.pack, qty:el.querySelector('.l_qty').value,
-    type:el.querySelector('.l_type').value, reason:reasonOf(el.querySelector('.l_reason'),el.querySelector('.l_reason_o')), _oth:isOther(el.querySelector('.l_reason').value)&&!el.querySelector('.l_reason_o').value.trim(),
+    type:el.querySelector('.l_type').value, reason:reasonOf(el.querySelector('.l_reason'),el.querySelector('.l_reason_o')),
     location:el.querySelector('.l_loc').value, remark:el.querySelector('.l_rem').value, photos:el._photos||[] }));
-  const d={date:$('i_date').value, shift:$('i_shift').value, user:$('i_user').value.trim(),
-    type:$('i_type').value, reason:reasonOf($('i_reason'),$('i_reason_o')), lines};
-  if(!d.user) return toast('กรุณากรอกชื่อผู้กรอก',true);
-  if((isOther($('i_reason').value)&&!$('i_reason_o').value.trim()) || lines.some(l=>l._oth)) return toast('กรุณาระบุสาเหตุ (อื่นๆ)',true);
-  lines.forEach(l=>delete l._oth);
-  store.set('irl_user',d.user);
-  $('i_save').disabled=true; $('i_save').textContent='กำลังบันทึก…';
+  store.set('irl_user',d.user); setWho(d.user);
+  busy($('i_save'),true);
   call('submitInv',d).then(r=>{ toast('บันทึกแล้ว '+r.ids.length+' รายการ');
-    document.querySelectorAll('#i_lines .ln:not(.hd)').forEach(e=>e.remove()); addLine(); $('i_pick').innerHTML=''; loadRecent('inv');
-  }).catch(()=>{}).finally(()=>{ $('i_save').disabled=false; $('i_save').textContent='บันทึก'; });
+    els.forEach(e=>e.remove()); addLine(); $('i_pick').innerHTML=''; $('i_ord').value=''; loadRecent('inv');
+  }).catch(()=>{}).finally(()=>busy($('i_save'),false));
 }
-/* ---------- Order lookup ---------- */
+$('i_user').addEventListener('input',e=>e.target.classList.remove('bad'));
+
+/* ---------- Order / SKU lookup (CS File) ---------- */
+function pickRow(x, showOrder){ return `<div class="t">${showOrder?esc(x.order||'-')+' · ':''}${esc(x.sku)} ${esc(x.item)}</div>
+  <div class="m">${esc(x.pack)} · ${esc(x.problem)} · ${esc(x.customer)}${x.zone?' ('+esc(x.zone)+')':''} · ลงเคส ${dayTh(x.caseDate)}${x.pickDate?' · นัดรับ '+dayTh(x.pickDate):''}</div>
+  <div class="q">${esc(x.qty)}<small>CS ชิ้น</small></div>`; }
 function findOrder(p){
   const id=$(p+'_ord').value.trim(); if(!id) return;
-  $(p+'_pick').innerHTML='<div class="hint">กำลังค้นหา…</div>';
+  $(p+'_pick').innerHTML='<div class="hint"><span class="spin"></span> กำลังค้นหา…</div>';
   call('lookupOrder',id).then(list=>{
-    if(!list.length){ $(p+'_pick').innerHTML='<div class="hint">ไม่พบ Order นี้ใน CS File</div>'; return; }
-    $(p+'_pick').innerHTML='<div class="pick">'+list.map((x,i)=>`<div data-i="${i}"><b>${esc(x.sku)}</b> ${esc(x.item)} · ${esc(x.pack)} — CS ${x.qty} ชิ้น · ${esc(x.problem)} · ${esc(x.customer)} (${esc(x.zone)}) · ลงเคส ${esc(x.caseDate)}${x.pickDate?' · นัดรับ '+esc(x.pickDate):''}</div>`).join('')+'</div>';
+    if(!list.length){ $(p+'_pick').innerHTML='<div class="hint err">ไม่พบ Order นี้ใน CS File</div>'; return; }
+    $(p+'_pick').innerHTML='<div class="pick">'+list.map((x,i)=>`<div data-i="${i}">${pickRow(x,false)}</div>`).join('')+'</div>';
     $(p+'_pick').querySelectorAll('[data-i]').forEach(el=>el.onclick=()=>{
       const x=list[+el.dataset.i];
-      if(p==='i'){
-        const first=document.querySelector('#i_lines .ln:not(.hd)');
-        if(first && !first.querySelector('.l_sku').value) first.remove();
-        addLine({order:id,sku:x.sku,name:x.item,pack:x.pack,qty:x.qty});
-        el.style.background='#e3f4e9';
-      } else {
-        $('d_sku').value=x.sku; $('d_qty').value=x.qty; $('d_skuinfo').textContent=x.item+' · '+x.pack; $(p+'_pick').innerHTML='';
-      }
+      $('d_sku').value=x.sku; $('d_qty').value=x.qty; $('d_skuinfo').textContent=x.item+' · '+x.pack; $('d_skuinfo').className='hint ok'; $(p+'_pick').innerHTML='';
     });
   }).catch(()=>{ $(p+'_pick').innerHTML=''; });
 }
-/* ---------- SKU lookup (CS File) ---------- */
 function findCsSku(){
   const sku=$('i_ord').value.trim(); if(!sku) return;
-  $('i_pick').innerHTML='<div class="hint">กำลังค้นหา…</div>';
+  $('i_pick').innerHTML='<div class="hint"><span class="spin"></span> กำลังค้นหา…</div>';
   call('lookupCsSku',sku).then(list=>{
-    if(!list.length){ $('i_pick').innerHTML='<div class="hint">ไม่พบ SKU นี้ใน CS File</div>'; return; }
-    $('i_pick').innerHTML='<div class="pick">'+list.map((x,i)=>`<div data-i="${i}"><b>${esc(x.order)}</b> · ${esc(x.sku)} ${esc(x.item)} · ${esc(x.pack)} — CS ${x.qty} ชิ้น · ${esc(x.problem)} · ${esc(x.customer)} (${esc(x.zone)}) · ลงเคส ${esc(x.caseDate)}${x.pickDate?' · นัดรับ '+esc(x.pickDate):''}</div>`).join('')+'</div>';
+    if(!list.length){ $('i_pick').innerHTML='<div class="hint err">ไม่พบ SKU นี้ใน CS File</div>'; return; }
+    $('i_pick').innerHTML='<div class="hint">พบ '+list.length+' รายการ</div><div class="pick">'+list.map((x,i)=>`<div data-i="${i}">${pickRow(x,true)}</div>`).join('')+'</div>';
     $('i_pick').querySelectorAll('[data-i]').forEach(el=>el.onclick=()=>{
       const x=list[+el.dataset.i];
       const first=document.querySelector('#i_lines .ln:not(.hd)');
       if(first && !first.querySelector('.l_sku').value) first.remove();
       addLine({order:x.order,sku:x.sku,name:x.item,pack:x.pack,qty:x.qty});
-      el.style.background='#e3f4e9';
+      el.classList.add('added'); toast('เพิ่ม '+x.sku+' ลงรายการแล้ว');
     });
   }).catch(()=>{ $('i_pick').innerHTML=''; });
 }
+
 /* ---------- DC ---------- */
-function dcSku(){ const s=$('d_sku').value.trim(); if(!s) return; $('d_skuinfo').textContent='กำลังค้นหา…';
-  call('lookupSku',s).then(r=>{ $('d_skuinfo').textContent = r ? r.name+' · '+r.pack+(r.price?' · ฿'+r.price:'') : '❗ ไม่พบ SKU นี้'; }).catch(()=>{ $('d_skuinfo').textContent=''; }); }
+function dcSku(){ const s=$('d_sku').value.trim(), h=$('d_skuinfo'); if(!s) return; h.className='hint'; h.textContent='กำลังค้นหา…';
+  call('lookupSku',s).then(r=>{ h.textContent = r ? r.name+' · '+r.pack+(r.price?' · ฿'+r.price:'') : 'ไม่พบ SKU นี้'; h.className='hint '+(r?'ok':'err'); }).catch(()=>{ h.textContent=''; }); }
 let PHOTOS=[];
 const MAX_PHOTOS=10;
 function photoCount(){ $('d_pcount').textContent=(PHOTOS.length?'แนบแล้ว '+PHOTOS.length+' รูป · ':'')+'แนบได้สูงสุด '+MAX_PHOTOS+' รูป · แตะที่รูปเพื่อลบ'; }
@@ -352,7 +558,7 @@ function addPhotos(inp){
   const files=[...inp.files], room=MAX_PHOTOS-PHOTOS.length; inp.value='';
   if(files.length>room) toast('แนบได้สูงสุด '+MAX_PHOTOS+' รูป',true);
   files.slice(0,Math.max(0,room)).forEach(f=>resize(f).then(p=>{ if(PHOTOS.length>=MAX_PHOTOS) return; PHOTOS.push(p);
-    const im=new Image(); im.src='data:image/jpeg;base64,'+p.data; im.title='แตะเพื่อลบรูปนี้'; im.style.cursor='pointer';
+    const im=new Image(); im.src='data:image/jpeg;base64,'+p.data; im.title='แตะเพื่อลบรูปนี้';
     im.onclick=()=>{ PHOTOS=PHOTOS.filter(x=>x!==p); im.remove(); photoCount(); };
     $('d_thumbs').appendChild(im); photoCount(); }));
 }
@@ -364,24 +570,30 @@ function saveDc(){
     order:$('d_ord').value.trim(),sku:$('d_sku').value.trim(),qty:$('d_qty').value,reason:$('d_reason').value,
     car:$('d_car').value.trim(),user:$('d_user').value.trim(),photos:PHOTOS,rfid:$('d_rfid').value.trim(),
     solve:$('d_solve').value,cause:$('d_cause').value,boxType:$('d_boxtype').value,status:$('d_status').value};
-  const miss=[['time','เวลาพบสินค้า'],['box','BOX/ZON'],['sku','SKU'],['qty','จำนวน'],['reason','เหตุ'],['car','ทะเบียนรถ / ผู้นำสินค้ามาคืน'],['user','ผู้กรอก']].filter(([k])=>!d[k]).map(x=>x[1]);
+  const req=[['time','เวลาพบสินค้า','d_time'],['box','BOX/ZON','d_box'],['sku','SKU','d_sku'],['qty','จำนวน','d_qty'],['reason','เหตุ','d_reason'],['car','ทะเบียนรถ / ผู้นำสินค้ามาคืน','d_car'],['user','ผู้กรอก','d_user']];
+  req.forEach(([k,,i])=>$(i).classList.toggle('bad',!d[k]));
+  const miss=req.filter(([k])=>!d[k]).map(x=>x[1]);
   if(!PHOTOS.length) miss.push('รูปภาพ');
   if(miss.length) return toast('กรุณากรอก: '+miss.join(', '),true);
-  store.set('irl_user',d.user);
-  $('d_save').disabled=true; $('d_save').textContent='กำลังบันทึก…';
+  store.set('irl_user',d.user); setWho(d.user);
+  busy($('d_save'),true);
   call('submitDc',d).then(r=>{ toast('บันทึกแล้ว '+r.ids[0]);
-    ['d_box','d_ord','d_sku','d_qty','d_car','d_rfid','d_photo','d_cam'].forEach(i=>$(i).value=''); $('d_skuinfo').textContent=''; $('d_thumbs').innerHTML=''; PHOTOS=[]; photoCount(); loadRecent('dc'); loadOpen();
-  }).catch(()=>{}).finally(()=>{ $('d_save').disabled=false; $('d_save').textContent='บันทึก'; });
+    ['d_box','d_ord','d_sku','d_qty','d_car','d_rfid','d_photo','d_cam'].forEach(i=>$(i).value=''); $('d_time').value=nowHM(); $('d_skuinfo').textContent=''; $('d_pick').innerHTML=''; $('d_thumbs').innerHTML=''; PHOTOS=[]; photoCount(); loadRecent('dc'); loadOpen();
+  }).catch(()=>{}).finally(()=>busy($('d_save'),false));
 }
+document.querySelectorAll('#t-dc input,#t-dc select').forEach(i=>i.addEventListener('input',()=>i.classList.remove('bad')));
+
 /* ---------- สรุปเคสเดิมจาก Record ID ---------- */
 let OPEN=[];
 const CASE_F={rfid:'d_rfid',solve:'d_solve',cause:'d_cause',boxType:'d_boxtype',status:'d_status'};
 function loadOpen(){ const cur=$('d_rec').value;
   call('getOpenDc').then(list=>{ OPEN=list;
     $('d_rec').innerHTML='<option value="">— เคสใหม่ (บันทึกพร้อมรายการด้านบน) —</option>'+list.map(x=>
-      `<option value="${esc(x.id)}">${esc(x.id)} · ${esc(x.date)} · ${esc(x.sku)} ${esc(x.item)} ×${esc(x.qty)}${x.status?' · '+esc(x.status):''}</option>`).join('');
+      `<option value="${esc(x.id)}">${esc(x.id)} · ${dayTh(x.date)} · ${esc(x.sku)} ${esc(x.item)} ×${esc(x.qty)}${x.status?' · '+esc(x.status):''}</option>`).join('');
     $('d_rec').value=list.some(x=>x.id===cur)?cur:''; pickCase();
-    $('d_recinfo').textContent = $('d_rec').value ? $('d_recinfo').textContent : 'ยังไม่สรุป '+list.length+' เคส — เลือก Record ID เพื่อสรุปเคสที่บันทึกไว้แล้ว';
+    $('d_opencnt').textContent='ยังไม่สรุป '+list.length; $('d_opencnt').classList.toggle('hide',!list.length);
+    const c=$('dc_cnt'); c.textContent=list.length; c.classList.toggle('hide',!list.length);
+    if(!$('d_rec').value) $('d_recinfo').textContent = list.length ? 'ยังไม่สรุป '+list.length+' เคส เลือก Record ID เพื่อสรุปเคสที่บันทึกไว้แล้ว' : 'ไม่มีเคสค้างสรุป';
   }).catch(()=>{}); }
 function pickCase(){ const x=OPEN.find(o=>o.id===$('d_rec').value);
   $('d_casebar').classList.toggle('hide',!x); $('d_save').classList.toggle('hide',!!x);
@@ -389,41 +601,147 @@ function pickCase(){ const x=OPEN.find(o=>o.id===$('d_rec').value);
   Object.entries(CASE_F).forEach(([k,i])=>{ const el=$(i); const v=x[k]||'';
     if(el.tagName==='SELECT' && v && ![...el.options].some(o=>o.value===v)) el.add(new Option(v,v));
     el.value = v || (el.tagName==='SELECT' ? (el.options[0]||{}).value||'' : ''); });
-  $('d_recinfo').innerHTML=`<b>${esc(x.id)}</b> · พบ ${esc(x.date)} ${esc(x.time)} · ${esc(x.box)} · SKU ${esc(x.sku)} ${esc(x.item)} ×${esc(x.qty)} · ${esc(x.reason)} · ${esc(x.car)} · ผู้กรอก ${esc(x.user)}`; }
+  $('d_recinfo').innerHTML=`<b>${esc(x.id)}</b> · พบ ${dayTh(x.date)} ${esc(x.time)} · ${esc(x.box)} · SKU ${esc(x.sku)} ${esc(x.item)} ×${esc(x.qty)} · ${esc(x.reason)} · ${esc(x.car)} · ผู้กรอก ${esc(x.user)}`; }
 function clearCase(){ $('d_rec').value=''; pickCase(); loadOpen(); }
 function saveCase(){ const id=$('d_rec').value; if(!id) return;
   const d={id}; Object.entries(CASE_F).forEach(([k,i])=>d[k]=$(i).value.trim());
-  $('d_casesave').disabled=true; $('d_casesave').textContent='กำลังบันทึก…';
+  busy($('d_casesave'),true);
   call('updateDcCase',d).then(()=>{ toast('สรุปเคส '+id+' แล้ว'); $('d_rec').value=''; loadOpen(); loadRecent('dc'); })
-  .catch(()=>{}).finally(()=>{ $('d_casesave').disabled=false; $('d_casesave').textContent='บันทึกสรุปเคส'; }); }
-function loadRecent(k){ call('getRecent',k).then(r=>{ const hide=['Email','Timestamp'];
-  const idx=r.headers.map((h,i)=>hide.includes(h)?-1:i).filter(i=>i>=0);
-  $(k==='dc'?'d_recent':'i_recent').innerHTML = r.rows.length ? table(idx.map(i=>r.headers[i]), r.rows.map(x=>idx.map(i=>x[i]))) : '<div class="hint" style="padding:10px">ยังไม่มีข้อมูล</div>'; }).catch(()=>{}); }
+  .catch(()=>{}).finally(()=>busy($('d_casesave'),false)); }
+
+/* ---------- บันทึกล่าสุด (การ์ด) ---------- */
+const getter = (headers,row) => name => { const i=headers.indexOf(name); return i<0 ? '' : (row[i]==null?'':row[i]); };
+function photoLinks(v){ const s=String(v||''); if(!/https?:\/\//.test(s)) return ''; return s.split(/,\s*/).filter(Boolean).map((u,j)=>`<a href="${esc(u)}" target="_blank" rel="noopener">รูป ${j+1}</a>`).join(' · '); }
+function matchPill(v){ if(!v) return ''; const c=/ไม่พบ/.test(v)?'p-short':/รอ|ยัง/.test(v)?'p-wait':'p-ok'; return `<span class="pill ${c}"><i></i>${esc(v)}</span>`; }
+function recInv(g){
+  const photos=photoLinks(g('รูปภาพ'));
+  return `<div class="rec"><div class="tag">INV</div>
+  <div><div class="ti">${esc(g('Item Name')||'-')} <small>[${esc(g('SKU'))}]</small></div>
+    <div class="mt">${esc(g('Record ID'))} · ${dayTh(g('วันที่รับคืน'))} · ${esc(g('กะ'))}${g('Order ID')&&g('Order ID')!=='-'?' · Order '+esc(g('Order ID')):''}</div>
+    <div class="mt">โดย ${esc(g('ผู้กรอก')||'-')}${photos?' · '+photos:''}</div></div>
+  <div class="c3">${esc(g('สาเหตุ')||'-')}${g('โลเคชั่นจัดเก็บ')?'<div class="mt">โลเคชั่น '+esc(g('โลเคชั่นจัดเก็บ'))+'</div>':''}${g('Remark')?'<div class="mt">'+esc(g('Remark'))+'</div>':''}</div>
+  <div class="num c4">${esc(g('จำนวน'))}<small>${esc(g('Pack Size'))}</small></div>
+  <div class="st"><span class="pill p-brand">${esc(g('ประเภท'))}</span>${matchPill(g('Match Status'))}</div></div>`;
+}
+function recDc(g){
+  const photos=photoLinks(g('รูปภาพ')), val=Number(g('มูลค่า'));
+  return `<div class="rec"><div class="tag dc">DC</div>
+  <div><div class="ti">${esc(g('Item Name')||'-')} <small>[${esc(g('SKU'))}]</small></div>
+    <div class="mt">${esc(g('Record ID'))} · ${dayTh(g('วันที่พบ'))} ${esc(g('เวลาพบสินค้า'))} · ${esc(g('BOX/ZON'))}${g('Order ID')?' · Order '+esc(g('Order ID')):''}</div>
+    <div class="mt">${esc(g('ทะเบียนรถ / ผู้นำสินค้ามาคืน'))} · โดย ${esc(g('ผู้กรอก')||'-')}${photos?' · '+photos:''}</div></div>
+  <div class="c3">${esc(g('เหตุ')||'-')}${g('สาเหตุ')?'<div class="mt">สาเหตุ: '+esc(g('สาเหตุ'))+'</div>':''}${g('SOLVE (ฝ่าย)')?'<div class="mt">ฝ่าย: '+esc(g('SOLVE (ฝ่าย)'))+'</div>':''}</div>
+  <div class="num c4">${esc(g('จำนวน'))} <small>${esc(g('Pack Size'))}${val?' · ฿'+val.toLocaleString('th-TH',{minimumFractionDigits:2}):''}</small></div>
+  <div class="st">${g('Status')?`<span class="pill ${g('Status')==='เสร็จสิ้น'?'p-ok':'p-wait'}">${esc(g('Status'))}</span>`:''}${matchPill(g('Match Status'))}</div></div>`;
+}
+function loadRecent(k){ call('getRecent',k).then(r=>{
+  const box=$(k==='dc'?'d_recent':'i_recent');
+  box.innerHTML = r.rows.length ? '<div class="recs">'+r.rows.map(x=>(k==='dc'?recDc:recInv)(getter(r.headers,x))).join('')+'</div>' : '<div class="empty">ยังไม่มีข้อมูล</div>';
+}).catch(()=>{}); }
+
 /* ---------- Reconcile ---------- */
-const ST_CLASS={'ครบ':'s-ok','รับขาด':'s-short','รับเกิน':'s-over','รอรับคืน':'s-wait','ยังไม่ได้รับคืน (เกินกำหนด)':'s-late','ยกเลิกรับกลับ':'s-cancel'};
+const ST_CLASS={'ครบ':'p-ok','รับขาด':'p-short','รับเกิน':'p-over','รอรับคืน':'p-wait','ยังไม่ได้รับคืน (เกินกำหนด)':'p-late','ยกเลิกรับกลับ':'p-cancel'};
+const ST_COLOR={'ยังไม่ได้รับคืน (เกินกำหนด)':'#912018','รับขาด':'#F04438','รับเกิน':'#F79009','รอรับคืน':'#2E90FA','ครบ':'#008065','ยกเลิกรับกลับ':'#C2C5C8'};
 const ST_ORDER=['ยังไม่ได้รับคืน (เกินกำหนด)','รับขาด','รับเกิน','รอรับคืน','ครบ','ยกเลิกรับกลับ'];
+const DIMS=['ปัญหา','ลูกค้า','Zone','รับกลับโดย','Error ฝ่าย','Item'];
+
+function setRange(p, silent){
+  const t=new Date(); let f=new Date(t);
+  if(p==='7') f.setDate(t.getDate()-6); else if(p==='30') f.setDate(t.getDate()-29); else if(p==='month') f=new Date(t.getFullYear(),t.getMonth(),1);
+  $('r_from').value=iso(f); $('r_to').value=iso(t); markPreset(p); if(!silent) loadRec();
+}
+function markPreset(p){ document.querySelectorAll('#r_pre .chip').forEach(c=>c.classList.toggle('on',c.dataset.p===p)); }
+document.querySelectorAll('#r_pre .chip').forEach(c=>c.onclick=()=>setRange(c.dataset.p));
+
+let recSeq=0;
 function loadRec(){
-  $('r_tbl').innerHTML='<div class="hint" style="padding:10px">กำลังโหลด…</div>';
+  const seq=++recSeq;
+  $('r_tbl').innerHTML='<div class="sk"></div><div class="sk"></div><div class="sk" style="width:60%"></div>';
   call('getDashboard',{from:$('r_from').value,to:$('r_to').value,q:$('r_q').value,status:REC_STATUS}).then(d=>{
-    $('r_last').textContent='เทียบข้อมูลล่าสุด: '+d.lastRecon+' · CS File '+d.csLines.toLocaleString()+' รายการ ('+d.csQty.toLocaleString()+' ชิ้น) · รับจริง '+d.rcvQty.toLocaleString()+' ชิ้น';
-    const all=Object.values(d.summary).reduce((a,b)=>a+b,0);
-    $('r_kpi').innerHTML=`<div class="kpi ${!REC_STATUS?'on':''}" data-s=""><div class="n">${all.toLocaleString()}</div><div class="t">ทั้งหมด</div></div>`+
-      ST_ORDER.map(s=>`<div class="kpi ${REC_STATUS===s?'on':''}" data-s="${s}"><div class="n">${(d.summary[s]||0).toLocaleString()}</div><div class="t"><span class="pill ${ST_CLASS[s]}">${s}</span></div></div>`).join('')+
-      `<div class="kpi" data-u="1"><div class="n">${d.unmatchedTotal.toLocaleString()}</div><div class="t"><span class="pill s-late">ไม่พบใน CS File</span></div></div>`;
-    $('r_kpi').querySelectorAll('[data-s]').forEach(k=>k.onclick=()=>{REC_STATUS=k.dataset.s;loadRec();});
-    $('r_kpi').querySelector('[data-u]').onclick=()=>document.querySelector('nav button[data-t="unm"]').click();
-    $('r_info').textContent='แสดง '+Math.min(d.total,500)+' จาก '+d.total.toLocaleString()+' รายการ (ล่าสุดก่อน)';
-    const st=d.headers.indexOf('สถานะ');
-    $('r_tbl').innerHTML=table(d.headers,d.rows,(v,i)=> i===st?`<span class="pill ${ST_CLASS[v]||''}">${esc(v)}</span>`:esc(v));
-    $('u_tbl').innerHTML=d.unmatched.length?table(d.unmatchedHeaders,d.unmatched):'<div class="hint" style="padding:10px">ไม่มีรายการ</div>';
+    if(seq!==recSeq) return;
+    REC=d; REC_SHOW=40; REC_GROUP=null; renderRec(); renderUnm(); setUnmCount(d.unmatchedTotal);
   }).catch(()=>{ $('r_tbl').innerHTML=''; });
 }
-function runRec(){ $('r_run').disabled=true; toast('กำลังเทียบข้อมูลกับ CS File…');
+function loadCounts(){ call('getDashboard',{from:$('r_from').value,to:$('r_to').value,q:'',status:''}).then(d=>setUnmCount(d.unmatchedTotal)).catch(()=>{}); }
+function setUnmCount(n){ const c=$('unm_cnt'); c.textContent=n; c.classList.toggle('hide',!n); }
+
+function renderRec(){
+  const d=REC; if(!d) return;
+  const S=d.summary||{}, all=Object.values(S).reduce((a,b)=>a+b,0);
+  $('r_last').textContent='เทียบข้อมูลล่าสุด '+(d.lastRecon||'-');
+  const okPct = all ? Math.round((S['ครบ']||0)/all*100) : 0;
+  $('r_stats').innerHTML=
+    stat('รายการใน CS File',nf(d.csLines),'','ช่วงวันที่ที่เลือก')+
+    stat('จำนวนตาม CS',nf(d.csQty),'ชิ้น','')+
+    stat('รับคืนจริง',nf(d.rcvQty),'ชิ้น',d.csQty?Math.round(d.rcvQty/d.csQty*100)+'% ของ CS':'')+
+    stat('รับครบ',okPct,'%',nf(S['ครบ']||0)+' จาก '+nf(all)+' รายการ');
+  $('r_stinfo').textContent=nf(all)+' รายการ';
+  $('r_stack').innerHTML=ST_ORDER.map(s=>S[s]?`<i style="width:${S[s]/all*100}%;background:${ST_COLOR[s]}" title="${esc(s)} ${S[s]}"></i>`:'').join('');
+  $('r_kpi').innerHTML=
+    `<button class="sbtn ${!REC_STATUS?'on':''}" data-s=""><span class="dot" style="background:var(--n800)"></span><span class="l">ทั้งหมด</span><span class="v">${nf(all)}</span></button>`+
+    ST_ORDER.map(s=>`<button class="sbtn ${REC_STATUS===s?'on':''}" data-s="${esc(s)}"><span class="dot" style="background:${ST_COLOR[s]}"></span><span class="l">${esc(s)}</span><span class="v">${nf(S[s]||0)}<small>${all?Math.round((S[s]||0)/all*100):0}%</small></span></button>`).join('')+
+    `<button class="sbtn" data-u="1"><span class="dot" style="background:var(--red)"></span><span class="l">ไม่พบใน CS File →</span><span class="v">${nf(d.unmatchedTotal)}</span></button>`;
+  $('r_kpi').querySelectorAll('[data-s]').forEach(k=>k.onclick=()=>{ REC_STATUS=k.dataset.s; loadRec(); });
+  $('r_kpi').querySelector('[data-u]').onclick=()=>showTab('unm');
+  renderAnalysis(); renderRows();
+}
+function stat(t,n,u,s){ return `<div class="stat"><div class="t">${t}</div><div class="n">${n}<small>${u}</small></div><div class="s">${s||'&nbsp;'}</div></div>`; }
+function recRows(){ const d=REC; if(!REC_GROUP) return d.rows; const i=d.headers.indexOf(REC_GROUP.dim);
+  return d.rows.filter(r=>(String(r[i]||'').trim()||'ไม่ระบุ')===REC_GROUP.val); }
+function renderAnalysis(){
+  const d=REC, dims=DIMS.filter(x=>d.headers.includes(x));
+  if(!dims.includes(REC_DIM)) REC_DIM=dims[0];
+  $('r_dims').innerHTML=dims.map(x=>`<button class="chip ${x===REC_DIM?'on':''}" data-d="${esc(x)}">${x==='Item'?'สินค้า':esc(x)}</button>`).join('');
+  $('r_dims').querySelectorAll('[data-d]').forEach(c=>c.onclick=()=>{ REC_DIM=c.dataset.d; renderAnalysis(); });
+  const i=d.headers.indexOf(REC_DIM), cnt={};
+  d.rows.forEach(r=>{ const k=String(r[i]||'').trim()||'ไม่ระบุ'; cnt[k]=(cnt[k]||0)+1; });
+  const arr=Object.entries(cnt).sort((a,b)=>b[1]-a[1]), tot=d.rows.length, max=arr.length?arr[0][1]:1, TOP=8;
+  $('r_bars').innerHTML = arr.length ? arr.slice(0,TOP).map(([k,v])=>`<button class="bar ${REC_GROUP&&REC_GROUP.dim===REC_DIM&&REC_GROUP.val===k?'on':''}" data-k="${esc(k)}"><div class="h"><span>${esc(k)}</span><b>${nf(v)}</b><em>${Math.round(v/tot*100)}%</em></div><div class="tr"><i style="width:${v/max*100}%"></i></div></button>`).join('') : '<div class="empty">ไม่มีข้อมูล</div>';
+  $('r_bars').querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{ const v=b.dataset.k;
+    REC_GROUP = (REC_GROUP&&REC_GROUP.dim===REC_DIM&&REC_GROUP.val===v) ? null : {dim:REC_DIM,val:v}; REC_SHOW=40; renderAnalysis(); renderRows(); });
+  $('r_anote').textContent=(arr.length>TOP?'อีก '+(arr.length-TOP)+' กลุ่ม ดูใน CSV · ':'')+'แตะแถบเพื่อกรองรายการด้านล่าง'+(tot<d.total?' · วิเคราะห์จาก '+nf(tot)+' รายการล่าสุด (จากทั้งหมด '+nf(d.total)+')':'');
+}
+function renderRows(){
+  const d=REC, rows=recRows();
+  $('r_ftag').innerHTML = REC_GROUP ? `<span class="ftag">${esc(REC_GROUP.dim)}: ${esc(REC_GROUP.val)}<button onclick="REC_GROUP=null;renderAnalysis();renderRows()" aria-label="ล้างตัวกรอง">✕</button></span>` : '';
+  $('r_info').textContent = REC_GROUP ? nf(rows.length)+' รายการ' : 'แสดง '+nf(Math.min(d.total,d.rows.length))+' จาก '+nf(d.total)+' (ล่าสุดก่อน)';
+  if(!rows.length){ $('r_tbl').innerHTML='<div class="empty">ไม่มีรายการ</div>'; return; }
+  const H=d.headers;
+  const html=rows.slice(0,REC_SHOW).map(r=>{ const g=getter(H,r), diff=Number(g('ส่วนต่าง'))||0, st=g('สถานะ');
+    const parts=[['INV',g('INV รับ')],['DC',g('DC พบ')],['Hub',g('Hub รับ')]].filter(x=>Number(x[1])).map(x=>x[0]+' '+x[1]).join(' / ');
+    return `<div class="rec"><div class="tag cs">CS</div>
+    <div><div class="ti">${esc(g('Item')||'-')} <small>[${esc(g('SKU')||'-')}]</small></div>
+      <div class="mt">${esc(g('ลูกค้า')||'ไม่ระบุลูกค้า')}${g('Zone')?' ('+esc(g('Zone'))+')':''}${g('Order ID')?' · Order '+esc(g('Order ID')):''} · ${esc(g('Pack'))}</div></div>
+    <div class="c3">${esc(g('ปัญหา')||'-')}<div class="mt">ลงเคส ${dayTh(g('วันที่ลงเคส'))}${g('วันนัดรับกลับ')?' · นัดรับ '+dayTh(g('วันนัดรับกลับ')):''}${g('รับกลับโดย')?' · '+esc(g('รับกลับโดย')):''}</div></div>
+    <div class="num c4">${nf(g('รวมรับจริง'))} / ${nf(g('CS จำนวน'))}<small>${parts?esc(parts)+' · ':''}<span class="${diff<0?'d-neg':diff>0?'d-pos':'d-zero'}">${diff>0?'+':''}${diff}</span></small></div>
+    <div class="st"><span class="pill ${ST_CLASS[st]||''}"><i></i>${esc(st)}</span></div></div>`; }).join('');
+  $('r_tbl').innerHTML='<div class="recs">'+html+'</div>'+(rows.length>REC_SHOW?`<div class="more-btn"><button class="btn sec" onclick="REC_SHOW+=60;renderRows()">แสดงเพิ่ม (${nf(rows.length-REC_SHOW)})</button></div>`:'');
+}
+function runRec(){ busy($('r_run'),true,'กำลังเทียบ…'); toast('กำลังเทียบข้อมูลกับ CS File…');
   call('runReconcileFromWeb').then(r=>{ toast(r.busy?'มีการเทียบข้อมูลอยู่แล้ว ลองใหม่อีกครั้ง':'เทียบเสร็จ: '+r.cs+' CS lines, ไม่พบ '+r.unmatched); loadRec(); })
-  .catch(()=>{}).finally(()=>$('r_run').disabled=false); }
-function table(h,rows,fmt){ fmt=fmt||((v)=>esc(v));
-  const cell=(v,i)=>{ const s=String(v); if(/^https?:\/\//.test(s)) return s.split(/,\s*/).map((u,j)=>`<a href="${esc(u)}" target="_blank" rel="noopener">รูป${j+1}</a>`).join(' '); return fmt(v,i); };
-  return '<table><thead><tr>'+h.map(x=>`<th>${esc(x)}</th>`).join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map((v,i)=>`<td>${cell(v,i)}</td>`).join('')+'</tr>').join('')+'</tbody></table>'; }
+  .catch(()=>{}).finally(()=>busy($('r_run'),false)); }
+
+/* ---------- Unmatched ---------- */
+function renderUnm(){
+  const d=REC; if(!d) return;
+  if(!d.unmatched.length){ $('u_tbl').innerHTML='<div class="empty">ไม่มีรายการ 🎉</div>'; return; }
+  $('u_tbl').innerHTML='<div class="recs">'+d.unmatched.map(r=>{ const g=getter(d.unmatchedHeaders,r), dc=/DC/i.test(g('ส่วน'));
+    return `<div class="rec"><div class="tag ${dc?'dc':''}">${esc(g('ส่วน')||'-')}</div>
+    <div><div class="ti">${esc(g('Item Name')||'-')} <small>[${esc(g('SKU'))}]</small></div>
+      <div class="mt">${esc(g('Record ID'))} · ${dayTh(g('วันที่'))}${g('Order ID')?' · Order '+esc(g('Order ID')):''}</div></div>
+    <div class="c3">${esc(g('เหตุ / สาเหตุ')||'-')}<div class="mt">โดย ${esc(g('ผู้กรอก')||'-')}${g('Source')?' · '+esc(g('Source')):''}</div></div>
+    <div class="num c4">${esc(g('จำนวน'))}<small>ชิ้น</small></div>
+    <div class="st"><span class="pill p-short"><i></i>ไม่พบใน CS</span></div></div>`; }).join('')+'</div>'+
+    (d.unmatchedTotal>d.unmatched.length?`<div class="note">แสดง ${nf(d.unmatched.length)} จาก ${nf(d.unmatchedTotal)} รายการ</div>`:'');
+}
+
+/* ---------- CSV (เปิดใน Excel ได้ภาษาไทยถูกต้อง) ---------- */
+function csv(name,h,rows){
+  const q=v=>{ const s=String(v==null?'':v); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
+  const blob=new Blob(['﻿'+[h,...rows].map(r=>r.map(q).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+function csvRec(){ if(!REC) return; csv('IRL-reconcile_'+$('r_from').value+'_'+$('r_to').value+'.csv',REC.headers,recRows()); }
+function csvUnm(){ if(!REC) return; csv('IRL-unmatched_'+$('r_from').value+'_'+$('r_to').value+'.csv',REC.unmatchedHeaders,REC.unmatched); }
 </script>
 </body>
 </html>
