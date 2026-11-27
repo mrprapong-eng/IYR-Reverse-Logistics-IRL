@@ -288,7 +288,7 @@ details.more[open]{padding-bottom:14px}
 <div class="card">
   <h2><span class="step">2</span>ค้นหาจาก SKU ใน CS File <span class="sub">ไม่บังคับ</span></h2>
   <div class="row">
-    <div class="search" style="max-width:340px"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="i_ord" placeholder="พิมพ์ SKU แล้วกด Enter" inputmode="numeric" autocomplete="off" autocapitalize="off" onkeydown="if(event.key==='Enter')findCsSku()"></div>
+    <div class="search" style="max-width:340px"><svg class="i" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="i_ord" placeholder="พิมพ์ SKU หรือบาร์โค้ด แล้วกด Enter" inputmode="numeric" autocomplete="off" autocapitalize="off" onkeydown="if(event.key==='Enter')findCsSku()"></div>
     <button class="btn sec" id="i_find" onclick="findCsSku()">ค้นหา</button>
   </div>
   <div class="hint">แตะรายการที่พบเพื่อเพิ่มลงในรายการสินค้า ช่วยให้จับคู่กับ CS File ได้แม่นยำ</div>
@@ -319,7 +319,7 @@ details.more[open]{padding-bottom:14px}
     <div><label for="d_wh">คลัง <b>*</b></label><select id="d_wh"></select></div>
     <div><label for="d_box">BOX/ZON <b>*</b></label><input id="d_box" placeholder="เช่น DD-62" autocapitalize="characters"></div>
     <div class="full"><label for="d_ord">Order ID</label><div class="row"><input id="d_ord" style="flex:1" autocomplete="off" autocapitalize="off" onkeydown="if(event.key==='Enter')findOrder('d')"><button class="btn sec" onclick="findOrder('d')">ค้นหา</button></div><div id="d_pick"></div></div>
-    <div class="full"><label for="d_sku">รหัสสินค้า (SKU) <b>*</b></label><input id="d_sku" onchange="dcSku()" inputmode="numeric" autocomplete="off" autocapitalize="off"><div class="hint" id="d_skuinfo"></div></div>
+    <div class="full"><label for="d_sku">รหัสสินค้า (SKU) <b>*</b></label><input id="d_sku" onchange="dcSku()" placeholder="SKU หรือบาร์โค้ด" inputmode="numeric" autocomplete="off" autocapitalize="off"><div class="hint" id="d_skuinfo"></div></div>
     <div><label for="d_qty">จำนวน <b>*</b></label><input type="number" inputmode="decimal" min="0" step="any" id="d_qty"></div>
     <div><label for="d_reason">เหตุ <b>*</b></label><select id="d_reason"></select></div>
     <div class="full"><label for="d_car">ทะเบียนรถ / ผู้นำสินค้ามาคืน <b>*</b></label><input id="d_car"></div>
@@ -491,7 +491,7 @@ function addLine(v){
   v=v||{}; const L=INIT.lists||{}; const el=document.createElement('div'); el.className='ln';
   el.innerHTML=`
 <div class="f fo"><span class="fl">Order ID</span><input placeholder="Order ID" class="l_order" autocomplete="off" autocapitalize="off" value="${esc(v.order)}"></div>
-<div class="f fs"><span class="fl">SKU *</span><input placeholder="SKU" class="l_sku" inputmode="numeric" autocomplete="off" autocapitalize="off" value="${esc(v.sku)}"></div>
+<div class="f fs"><span class="fl">SKU *</span><input placeholder="SKU / บาร์โค้ด" class="l_sku" inputmode="numeric" autocomplete="off" autocapitalize="off" value="${esc(v.sku)}"></div>
 <div class="f fn"><span class="fl">ชื่อสินค้า / Pack</span><div class="nmw">${pimg(v.sku)}<input class="l_name ro" readonly tabindex="-1" placeholder="ดึงอัตโนมัติจาก SKU" value="${esc(v.name?(v.name+(v.pack?' · '+v.pack:'')):'')}"></div></div>
 <div class="f fq"><span class="fl">จำนวน *</span><input type="number" inputmode="decimal" min="0" step="any" placeholder="จำนวน" class="l_qty" value="${esc(v.qty)}"></div>
 <div class="f ft"><span class="fl">ประเภท</span><select class="l_type">${(L.invTypes||[]).map(x=>`<option ${x===$('i_type').value?'selected':''}>${esc(x)}</option>`).join('')}</select></div>
@@ -513,8 +513,9 @@ function addLine(v){
     e.target.value=''; };
   el.querySelector('.l_sku').onchange=e=>{ const sku=e.target.value.trim(), nm=el.querySelector('.l_name'); if(!sku) return;
     nm.classList.remove('miss'); nm.value='กำลังค้นหา…';
-    call('lookupSku',sku).then(r=>{ el.dataset.nm=r?r.name:''; el.dataset.pack=r?r.pack:'';
-      nm.value = r ? r.name+(r.pack?' · '+r.pack:'') : 'ไม่พบ SKU นี้'; nm.classList.toggle('miss',!r); setImg(el.querySelector('.pimg'),sku,r?r.img:''); }).catch(()=>{ nm.value=''; }); };
+    call('lookupSku',sku).then(r=>{ if(r&&r.sku&&nsku(r.sku)!==nsku(sku)) e.target.value=r.sku;   /* บาร์โค้ด → item_id */
+    el.dataset.nm=r?r.name:''; el.dataset.pack=r?r.pack:'';
+      nm.value = r ? r.name+(r.pack?' · '+r.pack:'') : 'ไม่พบ SKU นี้'; nm.classList.toggle('miss',!r); setImg(el.querySelector('.pimg'),(r&&r.sku)||sku,r?r.img:''); }).catch(()=>{ nm.value=''; }); };
   $('i_lines').appendChild(el); lineCount();
 }
 function focusLast(){ const l=[...document.querySelectorAll('#i_lines .ln:not(.hd)')].pop(); if(!l) return;
@@ -577,7 +578,7 @@ function findCsSku(){
 
 /* ---------- DC ---------- */
 function dcSku(){ const s=$('d_sku').value.trim(), h=$('d_skuinfo'); if(!s) return; h.className='hint'; h.textContent='กำลังค้นหา…';
-  call('lookupSku',s).then(r=>{ if(r && r.img!==undefined) IMG[nsku(s)]=imgUrl(r.img); if(r) h.innerHTML=skuInfo(s, r.name+' · '+r.pack+(r.price?' · ฿'+r.price:'')); else h.textContent='ไม่พบ SKU นี้'; h.className='hint '+(r?'ok':'err'); }).catch(()=>{ h.textContent=''; }); }
+  call('lookupSku',s).then(r=>{ const s2=(r&&r.sku)?nsku(r.sku):nsku(s); if(s2!==nsku(s)) $('d_sku').value=s2;   /* บาร์โค้ด → item_id */ if(r && r.img!==undefined) IMG[s2]=imgUrl(r.img); if(r) h.innerHTML=skuInfo(s2, r.name+' · '+r.pack+(r.price?' · ฿'+r.price:'')); else h.textContent='ไม่พบ SKU นี้'; h.className='hint '+(r?'ok':'err'); }).catch(()=>{ h.textContent=''; }); }
 let PHOTOS=[];
 const MAX_PHOTOS=10;
 function photoCount(){ $('d_pcount').textContent=(PHOTOS.length?'แนบแล้ว '+PHOTOS.length+' รูป · ':'')+'แนบได้สูงสุด '+MAX_PHOTOS+' รูป · แตะที่รูปเพื่อลบ'; }
