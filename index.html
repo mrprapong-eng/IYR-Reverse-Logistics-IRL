@@ -244,6 +244,16 @@ details.more[open]{padding-bottom:14px}
   .pick>div{padding:12px}
 }
 @media(max-width:380px){ .grid{grid-template-columns:1fr} .sts{grid-template-columns:1fr} }
+/* รูปสินค้า (item_cover_image จากชีท Item master) */
+.pimg{width:44px;height:44px;border-radius:10px;background:#f3f5f4;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:18px;color:#b5bdb9;flex:none;overflow:hidden}
+.pimg img{width:100%;height:100%;object-fit:contain;background:#fff;display:block}
+.pimg.lg{width:64px;height:64px;border-radius:12px;font-size:24px}
+.wimg{display:grid;grid-template-columns:44px minmax(0,1fr);column-gap:12px;align-items:start}
+.wimg>.pimg{grid-row:1/span 9}.wimg>*:not(.pimg){grid-column:2}
+.nmw{display:flex;gap:8px;align-items:center}.nmw input{flex:1;min-width:0}
+.skui{display:flex;gap:12px;align-items:center}
+.pick>div{grid-template-columns:44px minmax(0,1fr) auto;column-gap:12px}
+.pick>div>.pimg{grid-row:1/span 2;grid-column:1}.pick .t,.pick .m{grid-column:2}.pick .q{grid-column:3}
 </style>
 </head>
 <body>
@@ -393,6 +403,23 @@ const API = 'https://script.google.com/macros/s/AKfycbyNcsKcgsDji_c3qN-i2r_ar17P
 let INIT = {lists:{}};
 let REC_STATUS = '', REC = null, REC_SHOW = 40, REC_DIM = 'ปัญหา', REC_GROUP = null;
 const $ = id => document.getElementById(id);
+/* ---------- รูปสินค้า: item_cover_image จากชีท Item master (ผ่าน getItemImages) ---------- */
+const IMG={}, IMG_Q=new Set(); let IMG_T=0;
+const nsku=s=>String(s==null?'':s).trim().replace(/\.0+$/,'');
+const imgUrl=u=>{ u=String(u||'').trim(); return /^https?:\/\//i.test(u)?u.replace(/^http:/i,'https:'):''; };
+function pimg(sku,cls){ return `<span class="pimg ${cls||''}" data-sku="${esc(nsku(sku))}">📦</span>`; }
+function skuInfo(sku,txt){ return `<span class="skui">${pimg(sku,'lg')}<span>${esc(txt)}</span></span>`; }
+function setImg(pi,sku,url){ if(!pi) return; const k=nsku(sku); if(url!==undefined) IMG[k]=imgUrl(url); pi.dataset.sku=k; delete pi.dataset.done; pi.textContent='📦'; paintImgs(); }
+async function fetchImgs(ks){ try{ const r=await fetch(API,{method:'POST',body:JSON.stringify({fn:'getItemImages',args:[ks]}),headers:{'Content-Type':'text/plain;charset=utf-8'},credentials:'omit',redirect:'follow'}); const j=await r.json(); return j.ok?(j.data||{}):{}; }catch(e){ return {}; } }
+function paintImgs(){
+  document.querySelectorAll('.pimg[data-sku]:not([data-done])').forEach(el=>{ const k=el.dataset.sku;
+    if(!k){ el.dataset.done=1; return; }
+    if(k in IMG){ el.dataset.done=1; if(IMG[k]) el.innerHTML=`<img src="${esc(IMG[k])}" loading="lazy" referrerpolicy="no-referrer" alt="" onerror="this.remove()">`; }
+    else IMG_Q.add(k); });
+  if(IMG_Q.size && !IMG_T) IMG_T=setTimeout(async()=>{ const ks=[...IMG_Q]; IMG_Q.clear(); const mp=await fetchImgs(ks);
+    ks.forEach(k=>IMG[k]=imgUrl(mp[k])); IMG_T=0; paintImgs(); },80);
+}
+new MutationObserver(()=>{ if(!IMG_T) setTimeout(paintImgs,0); }).observe(document.documentElement,{childList:true,subtree:true});
 const esc = s => String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const store = { get(k){try{return localStorage.getItem(k)||''}catch(e){return ''}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}} };
 const nf = n => (Number(n)||0).toLocaleString('th-TH');
@@ -465,7 +492,7 @@ function addLine(v){
   el.innerHTML=`
 <div class="f fo"><span class="fl">Order ID</span><input placeholder="Order ID" class="l_order" autocomplete="off" autocapitalize="off" value="${esc(v.order)}"></div>
 <div class="f fs"><span class="fl">SKU *</span><input placeholder="SKU" class="l_sku" inputmode="numeric" autocomplete="off" autocapitalize="off" value="${esc(v.sku)}"></div>
-<div class="f fn"><span class="fl">ชื่อสินค้า / Pack</span><input class="l_name ro" readonly tabindex="-1" placeholder="ดึงอัตโนมัติจาก SKU" value="${esc(v.name?(v.name+(v.pack?' · '+v.pack:'')):'')}"></div>
+<div class="f fn"><span class="fl">ชื่อสินค้า / Pack</span><div class="nmw">${pimg(v.sku)}<input class="l_name ro" readonly tabindex="-1" placeholder="ดึงอัตโนมัติจาก SKU" value="${esc(v.name?(v.name+(v.pack?' · '+v.pack:'')):'')}"></div></div>
 <div class="f fq"><span class="fl">จำนวน *</span><input type="number" inputmode="decimal" min="0" step="any" placeholder="จำนวน" class="l_qty" value="${esc(v.qty)}"></div>
 <div class="f ft"><span class="fl">ประเภท</span><select class="l_type">${(L.invTypes||[]).map(x=>`<option ${x===$('i_type').value?'selected':''}>${esc(x)}</option>`).join('')}</select></div>
 <div class="f fr"><span class="fl">สาเหตุ</span><select class="l_reason"><option value="">(ตามค่าเริ่มต้น)</option>${(L.invReasons||[]).map(x=>`<option>${esc(x)}</option>`).join('')}</select><input class="l_reason_o oth hide" placeholder="ระบุสาเหตุ (อื่นๆ) *"></div>
@@ -487,7 +514,7 @@ function addLine(v){
   el.querySelector('.l_sku').onchange=e=>{ const sku=e.target.value.trim(), nm=el.querySelector('.l_name'); if(!sku) return;
     nm.classList.remove('miss'); nm.value='กำลังค้นหา…';
     call('lookupSku',sku).then(r=>{ el.dataset.nm=r?r.name:''; el.dataset.pack=r?r.pack:'';
-      nm.value = r ? r.name+(r.pack?' · '+r.pack:'') : 'ไม่พบ SKU นี้'; nm.classList.toggle('miss',!r); }).catch(()=>{ nm.value=''; }); };
+      nm.value = r ? r.name+(r.pack?' · '+r.pack:'') : 'ไม่พบ SKU นี้'; nm.classList.toggle('miss',!r); setImg(el.querySelector('.pimg'),sku,r?r.img:''); }).catch(()=>{ nm.value=''; }); };
   $('i_lines').appendChild(el); lineCount();
 }
 function focusLast(){ const l=[...document.querySelectorAll('#i_lines .ln:not(.hd)')].pop(); if(!l) return;
@@ -517,7 +544,7 @@ function saveInv(){
 $('i_user').addEventListener('input',e=>e.target.classList.remove('bad'));
 
 /* ---------- Order / SKU lookup (CS File) ---------- */
-function pickRow(x, showOrder){ return `<div class="t">${showOrder?esc(x.order||'-')+' · ':''}${esc(x.sku)} ${esc(x.item)}</div>
+function pickRow(x, showOrder){ return `${pimg(x.sku)}<div class="t">${showOrder?esc(x.order||'-')+' · ':''}${esc(x.sku)} ${esc(x.item)}</div>
   <div class="m">${esc(x.pack)} · ${esc(x.problem)} · ${esc(x.customer)}${x.zone?' ('+esc(x.zone)+')':''} · ลงเคส ${dayTh(x.caseDate)}${x.pickDate?' · นัดรับ '+dayTh(x.pickDate):''}</div>
   <div class="q">${esc(x.qty)}<small>CS ชิ้น</small></div>`; }
 function findOrder(p){
@@ -528,7 +555,7 @@ function findOrder(p){
     $(p+'_pick').innerHTML='<div class="pick">'+list.map((x,i)=>`<div data-i="${i}">${pickRow(x,false)}</div>`).join('')+'</div>';
     $(p+'_pick').querySelectorAll('[data-i]').forEach(el=>el.onclick=()=>{
       const x=list[+el.dataset.i];
-      $('d_sku').value=x.sku; $('d_qty').value=x.qty; $('d_skuinfo').textContent=x.item+' · '+x.pack; $('d_skuinfo').className='hint ok'; $(p+'_pick').innerHTML='';
+      $('d_sku').value=x.sku; $('d_qty').value=x.qty; $('d_skuinfo').innerHTML=skuInfo(x.sku,x.item+' · '+x.pack); $('d_skuinfo').className='hint ok'; $(p+'_pick').innerHTML='';
     });
   }).catch(()=>{ $(p+'_pick').innerHTML=''; });
 }
@@ -550,7 +577,7 @@ function findCsSku(){
 
 /* ---------- DC ---------- */
 function dcSku(){ const s=$('d_sku').value.trim(), h=$('d_skuinfo'); if(!s) return; h.className='hint'; h.textContent='กำลังค้นหา…';
-  call('lookupSku',s).then(r=>{ h.textContent = r ? r.name+' · '+r.pack+(r.price?' · ฿'+r.price:'') : 'ไม่พบ SKU นี้'; h.className='hint '+(r?'ok':'err'); }).catch(()=>{ h.textContent=''; }); }
+  call('lookupSku',s).then(r=>{ if(r && r.img!==undefined) IMG[nsku(s)]=imgUrl(r.img); if(r) h.innerHTML=skuInfo(s, r.name+' · '+r.pack+(r.price?' · ฿'+r.price:'')); else h.textContent='ไม่พบ SKU นี้'; h.className='hint '+(r?'ok':'err'); }).catch(()=>{ h.textContent=''; }); }
 let PHOTOS=[];
 const MAX_PHOTOS=10;
 function photoCount(){ $('d_pcount').textContent=(PHOTOS.length?'แนบแล้ว '+PHOTOS.length+' รูป · ':'')+'แนบได้สูงสุด '+MAX_PHOTOS+' รูป · แตะที่รูปเพื่อลบ'; }
@@ -616,7 +643,7 @@ function matchPill(v){ if(!v) return ''; const c=/ไม่พบ/.test(v)?'p-sh
 function recInv(g){
   const photos=photoLinks(g('รูปภาพ'));
   return `<div class="rec"><div class="tag">INV</div>
-  <div><div class="ti">${esc(g('Item Name')||'-')} <small>[${esc(g('SKU'))}]</small></div>
+  <div class="wimg">${pimg(g('SKU'))}<div class="ti">${esc(g('Item Name')||'-')} <small>[${esc(g('SKU'))}]</small></div>
     <div class="mt">${esc(g('Record ID'))} · ${dayTh(g('วันที่รับคืน'))} · ${esc(g('กะ'))}${g('Order ID')&&g('Order ID')!=='-'?' · Order '+esc(g('Order ID')):''}</div>
     <div class="mt">โดย ${esc(g('ผู้กรอก')||'-')}${photos?' · '+photos:''}</div></div>
   <div class="c3">${esc(g('สาเหตุ')||'-')}${g('โลเคชั่นจัดเก็บ')?'<div class="mt">โลเคชั่น '+esc(g('โลเคชั่นจัดเก็บ'))+'</div>':''}${g('Remark')?'<div class="mt">'+esc(g('Remark'))+'</div>':''}</div>
@@ -626,7 +653,7 @@ function recInv(g){
 function recDc(g){
   const photos=photoLinks(g('รูปภาพ')), val=Number(g('มูลค่า'));
   return `<div class="rec"><div class="tag dc">DC</div>
-  <div><div class="ti">${esc(g('Item Name')||'-')} <small>[${esc(g('SKU'))}]</small></div>
+  <div class="wimg">${pimg(g('SKU'))}<div class="ti">${esc(g('Item Name')||'-')} <small>[${esc(g('SKU'))}]</small></div>
     <div class="mt">${esc(g('Record ID'))} · ${dayTh(g('วันที่พบ'))} ${esc(g('เวลาพบสินค้า'))} · ${esc(g('BOX/ZON'))}${g('Order ID')?' · Order '+esc(g('Order ID')):''}</div>
     <div class="mt">${esc(g('ทะเบียนรถ / ผู้นำสินค้ามาคืน'))} · โดย ${esc(g('ผู้กรอก')||'-')}${photos?' · '+photos:''}</div></div>
   <div class="c3">${esc(g('เหตุ')||'-')}${g('สาเหตุ')?'<div class="mt">สาเหตุ: '+esc(g('สาเหตุ'))+'</div>':''}${g('SOLVE (ฝ่าย)')?'<div class="mt">ฝ่าย: '+esc(g('SOLVE (ฝ่าย)'))+'</div>':''}</div>
@@ -709,7 +736,7 @@ function renderRows(){
   const html=rows.slice(0,REC_SHOW).map(r=>{ const g=getter(H,r), diff=Number(g('ส่วนต่าง'))||0, st=g('สถานะ');
     const parts=[['INV',g('INV รับ')],['DC',g('DC พบ')],['Hub',g('Hub รับ')]].filter(x=>Number(x[1])).map(x=>x[0]+' '+x[1]).join(' / ');
     return `<div class="rec"><div class="tag cs">CS</div>
-    <div><div class="ti">${esc(g('Item')||'-')} <small>[${esc(g('SKU')||'-')}]</small></div>
+    <div class="wimg">${pimg(g('SKU'))}<div class="ti">${esc(g('Item')||'-')} <small>[${esc(g('SKU')||'-')}]</small></div>
       <div class="mt">${esc(g('ลูกค้า')||'ไม่ระบุลูกค้า')}${g('Zone')?' ('+esc(g('Zone'))+')':''}${g('Order ID')?' · Order '+esc(g('Order ID')):''} · ${esc(g('Pack'))}</div></div>
     <div class="c3">${esc(g('ปัญหา')||'-')}<div class="mt">ลงเคส ${dayTh(g('วันที่ลงเคส'))}${g('วันนัดรับกลับ')?' · นัดรับ '+dayTh(g('วันนัดรับกลับ')):''}${g('รับกลับโดย')?' · '+esc(g('รับกลับโดย')):''}</div></div>
     <div class="num c4">${nf(g('รวมรับจริง'))} / ${nf(g('CS จำนวน'))}<small>${parts?esc(parts)+' · ':''}<span class="${diff<0?'d-neg':diff>0?'d-pos':'d-zero'}">${diff>0?'+':''}${diff}</span></small></div>
@@ -726,7 +753,7 @@ function renderUnm(){
   if(!d.unmatched.length){ $('u_tbl').innerHTML='<div class="empty">ไม่มีรายการ 🎉</div>'; return; }
   $('u_tbl').innerHTML='<div class="recs">'+d.unmatched.map(r=>{ const g=getter(d.unmatchedHeaders,r), dc=/DC/i.test(g('ส่วน'));
     return `<div class="rec"><div class="tag ${dc?'dc':''}">${esc(g('ส่วน')||'-')}</div>
-    <div><div class="ti">${esc(g('Item Name')||'-')} <small>[${esc(g('SKU'))}]</small></div>
+    <div class="wimg">${pimg(g('SKU'))}<div class="ti">${esc(g('Item Name')||'-')} <small>[${esc(g('SKU'))}]</small></div>
       <div class="mt">${esc(g('Record ID'))} · ${dayTh(g('วันที่'))}${g('Order ID')?' · Order '+esc(g('Order ID')):''}</div></div>
     <div class="c3">${esc(g('เหตุ / สาเหตุ')||'-')}<div class="mt">โดย ${esc(g('ผู้กรอก')||'-')}${g('Source')?' · '+esc(g('Source')):''}</div></div>
     <div class="num c4">${esc(g('จำนวน'))}<small>ชิ้น</small></div>
