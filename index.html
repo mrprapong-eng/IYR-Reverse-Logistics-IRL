@@ -473,7 +473,7 @@ function ready(){ if($('i_wait')){ $('i_wait').remove(); addLine(); } }
   const u=store.get('irl_user'); $('i_user').value=$('d_user').value=u; setWho(u);
   setRange('30', true);
   let cached=null; try{ cached=JSON.parse(store.get('irl_lists')||'null'); }catch(e){}
-  if(cached){ INIT={lists:cached}; applyLists(cached); ready(); }
+  if(cached){ INIT={lists:cached}; applyLists(cached); setTimeout(ready,0); }   // รอให้สคริปต์โหลดครบก่อน (กัน ICON_X/recSeq ยังไม่ถูกประกาศ)
 })();
 call('getInit').then(d=>{
   INIT=d; store.set('irl_lists',JSON.stringify(d.lists||{}));
